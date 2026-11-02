@@ -1,0 +1,70 @@
+{
+  "status": "planned",
+  "evaluation_budget": 30000,
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "seed_choice": "Project choice; the brief requires ten independent seeds.",
+  "instances": [
+    {
+      "name": "eil51",
+      "path": "bees_optimization/data/tsplib/eil51.tsp",
+      "cities": 51,
+      "optimal_length": 426
+    },
+    {
+      "name": "berlin52",
+      "path": "bees_optimization/data/tsplib/berlin52.tsp",
+      "cities": 52,
+      "optimal_length": 7542
+    },
+    {
+      "name": "st70",
+      "path": "bees_optimization/data/tsplib/st70.tsp",
+      "cities": 70,
+      "optimal_length": 675
+    },
+    {
+      "name": "eil76",
+      "path": "bees_optimization/data/tsplib/eil76.tsp",
+      "cities": 76,
+      "optimal_length": 538
+    },
+    {
+      "name": "kroA100",
+      "path": "bees_optimization/data/tsplib/kroA100.tsp",
+      "cities": 100,
+      "optimal_length": 21282
+    },
+    {
+      "name": "ch150",
+      "path": "bees_optimization/data/tsplib/ch150.tsp",
+      "cities": 150,
+      "optimal_length": 6528
+    }
+  ],
+  "neighborhoods": [
+    "swap",
+    "segment_reversal"
+  ],
+  "fixed_start_city": 1,
+  "ba": {
+    "scout_population": null,
+    "selected_sites": null,
+    "elite_sites": null,
+    "elite_recruits": null,
+    "other_site_recruits": null,
+    "retention_policy": null,
+    "scouting_policy": null
+  },
+  "expected_runs": 120
+}

@@ -1,0 +1,83 @@
+{
+  "description": "Original benchmark provenance; sha256 hashes the bundled file bytes.",
+  "files": [
+    {
+      "path": "tsplib/eil51.tsp",
+      "source_url": "https://comopt.ifi.uni-heidelberg.de/software/TSPLIB95/tsp/eil51.tsp.gz",
+      "resolved_url": "https://comopt.ifi.uni-heidelberg.de/software/TSPLIB95/tsp/eil51.tsp.gz",
+      "retrieved_on": "2026-11-02",
+      "bytes": 579,
+      "sha256": "66c05ad077ffd64d5778e358bbd16be049f8c8ae880cbd24f034487331d1ccce",
+      "cities": 51,
+      "distance_type": "EUC_2D",
+      "optimal_length": 426,
+      "download_sha256": "7176f94c7ca15c242fa4e9d418c19f326c17695ea1d6b2ea2d3caf8c9d172bbe",
+      "transformation": "gzip decompression only"
+    },
+    {
+      "path": "tsplib/berlin52.tsp",
+      "source_url": "https://comopt.ifi.uni-heidelberg.de/software/TSPLIB95/tsp/berlin52.tsp.gz",
+      "resolved_url": "https://comopt.ifi.uni-heidelberg.de/software/TSPLIB95/tsp/berlin52.tsp.gz",
+      "retrieved_on": "2026-11-02",
+      "bytes": 916,
+      "sha256": "8496a5838133e3c3eb25a9fa8893b1ac302593fc8dc325350643a0cabd8abadc",
+      "cities": 52,
+      "distance_type": "EUC_2D",
+      "optimal_length": 7542,
+      "download_sha256": "5bd7da24ec487b0d0bab1d68c423310297865d0770b31e79e6c99ef7b264b832",
+      "transformation": "gzip decompression only"
+    },
+    {
+      "path": "tsplib/st70.tsp",
+      "source_url": "https://comopt.ifi.uni-heidelberg.de/software/TSPLIB95/tsp/st70.tsp.gz",
+      "resolved_url": "https://comopt.ifi.uni-heidelberg.de/software/TSPLIB95/tsp/st70.tsp.gz",
+      "retrieved_on": "2026-11-02",
+      "bytes": 734,
+      "sha256": "60c09e8886609bf22d6dc699fe7d7aa1924207d084578aad1a377ec65cf15b1b",
+      "cities": 70,
+      "distance_type": "EUC_2D",
+      "optimal_length": 675,
+      "download_sha256": "7b6d70948114e9406dd3a4cc2fc2329aeda71e70b7c7327db23ad27aa2086087",
+      "transformation": "gzip decompression only"
+    },
+    {
+      "path": "tsplib/eil76.tsp",
+      "source_url": "https://comopt.ifi.uni-heidelberg.de/software/TSPLIB95/tsp/eil76.tsp.gz",
+      "resolved_url": "https://comopt.ifi.uni-heidelberg.de/software/TSPLIB95/tsp/eil76.tsp.gz",
+      "retrieved_on": "2026-11-02",
+      "bytes": 801,
+      "sha256": "74a81d109969e0e46ecc62ff9bd051bfce36b508326bfcd22168e58d03af2447",
+      "cities": 76,
+      "distance_type": "EUC_2D",
+      "optimal_length": 538,
+      "download_sha256": "20fb8747d37de6e7e56f08549cb899274313eb7dcf0409c0bd972f2f5819f19c",
+      "transformation": "gzip decompression only"
+    },
+    {
+      "path": "tsplib/kroA100.tsp",
+      "source_url": "https://comopt.ifi.uni-heidelberg.de/software/TSPLIB95/tsp/kroA100.tsp.gz",
+      "resolved_url": "https://comopt.ifi.uni-heidelberg.de/software/TSPLIB95/tsp/kroA100.tsp.gz",
+      "retrieved_on": "2026-11-02",
+      "bytes": 1345,
+      "sha256": "e103100c1cf31dfc06be95a9d04011b5a8753bb65a3339594ca34404e574bdf5",
+      "cities": 100,
+      "distance_type": "EUC_2D",
+      "optimal_length": 21282,
+      "download_sha256": "016cb494dcd766cc06531c12a9fa79bd348cb21f2b2bbb9edb864951e8de7aa5",
+      "transformation": "gzip decompression only"
+    },
+    {
+      "path": "tsplib/ch150.tsp",
+      "source_url": "https://comopt.ifi.uni-heidelberg.de/software/TSPLIB95/tsp/ch150.tsp.gz",
+      "resolved_url": "https://comopt.ifi.uni-heidelberg.de/software/TSPLIB95/tsp/ch150.tsp.gz",
+      "retrieved_on": "2026-11-02",
+      "bytes": 5070,
+      "sha256": "05abd424f773269b13477d367e534797aac080fb536a28074a72a9c0ba8064f5",
+      "cities": 150,
+      "distance_type": "EUC_2D",
+      "optimal_length": 6528,
+      "download_sha256": "30bba012d1b16715c24f9e383bced81143871e2caf7f2b49a09da4ee844762cf",
+      "transformation": "gzip decompression only"
+    }
+  ]
+}

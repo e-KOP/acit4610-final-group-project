@@ -1,0 +1,60 @@
+{
+  "description": "Original benchmark provenance; sha256 hashes the bundled file bytes.",
+  "files": [
+    {
+      "path": "or_library/port1.txt",
+      "source_url": "https://people.brunel.ac.uk/~mastjjb/jeb/orlib/files/port1.txt",
+      "resolved_url": "https://people.brunel.ac.uk/~mastjjb/jeb/orlib/files/port1.txt",
+      "retrieved_on": "2026-11-02",
+      "bytes": 7715,
+      "sha256": "15615853de5990a70d913c71b91fd90aa45856832c94a6f00e79907fddb5b1d2",
+      "assets": 31,
+      "correlation_records": 496,
+      "transformation": "none"
+    },
+    {
+      "path": "or_library/port2.txt",
+      "source_url": "https://people.brunel.ac.uk/~mastjjb/jeb/orlib/files/port2.txt",
+      "resolved_url": "https://people.brunel.ac.uk/~mastjjb/jeb/orlib/files/port2.txt",
+      "retrieved_on": "2026-11-02",
+      "bytes": 55670,
+      "sha256": "6cad94fd24c8561772fd975621e40a6b06bd613dc3e4e145d595b143e9f9742d",
+      "assets": 85,
+      "correlation_records": 3655,
+      "transformation": "none"
+    },
+    {
+      "path": "or_library/port3.txt",
+      "source_url": "https://people.brunel.ac.uk/~mastjjb/jeb/orlib/files/port3.txt",
+      "resolved_url": "https://people.brunel.ac.uk/~mastjjb/jeb/orlib/files/port3.txt",
+      "retrieved_on": "2026-11-02",
+      "bytes": 60880,
+      "sha256": "e91527a0befeb789491e627478a703e98f8ce9a79fa9557742d30078c0930838",
+      "assets": 89,
+      "correlation_records": 4005,
+      "transformation": "none"
+    },
+    {
+      "path": "or_library/port4.txt",
+      "source_url": "https://people.brunel.ac.uk/~mastjjb/jeb/orlib/files/port4.txt",
+      "resolved_url": "https://people.brunel.ac.uk/~mastjjb/jeb/orlib/files/port4.txt",
+      "retrieved_on": "2026-11-02",
+      "bytes": 73817,
+      "sha256": "063ae8837619a81f0a1c3ab79a8c86a1596c6da8715206d123871b39ff95cea4",
+      "assets": 98,
+      "correlation_records": 4851,
+      "transformation": "none"
+    },
+    {
+      "path": "or_library/port5.txt",
+      "source_url": "https://people.brunel.ac.uk/~mastjjb/jeb/orlib/files/port5.txt",
+      "resolved_url": "https://people.brunel.ac.uk/~mastjjb/jeb/orlib/files/port5.txt",
+      "retrieved_on": "2026-11-02",
+      "bytes": 412049,
+      "sha256": "96dababdb62bdf1428b487a21c0ab5a7eaa1bcf8065c0dfdaf3eff2476b8070a",
+      "assets": 225,
+      "correlation_records": 25425,
+      "transformation": "none"
+    }
+  ]
+}

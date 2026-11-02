@@ -1,0 +1,7 @@
+* text=auto
+*.py text eol=lf
+*.md text eol=lf
+*.json text eol=lf
+# Preserve original benchmark bytes and checksum reproducibility.
+bees_optimization/data/tsplib/*.tsp -text -whitespace
+portfolio_optimization/data/or_library/*.txt -text -whitespace

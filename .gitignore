@@ -1,0 +1,16 @@
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.DS_Store
+.idea/
+.vscode/
+.env
+.env.*
+!.env.example
+/tmp/
+# Keep required raw results and figures trackable; ignore only scratch runs.
+**/results/scratch/

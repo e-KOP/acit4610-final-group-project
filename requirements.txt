@@ -1,0 +1,2 @@
+# The repository scaffold uses Python 3.10+ and the standard library only.
+# Add exact, tested dependency versions when implementation begins.

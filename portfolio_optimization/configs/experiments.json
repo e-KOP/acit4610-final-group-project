@@ -1,0 +1,72 @@
+{
+  "status": "planned",
+  "evaluation_budget": 30000,
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "seed_choice": "Project choice; the brief requires ten independent seeds.",
+  "datasets": [
+    {
+      "name": "port1",
+      "path": "portfolio_optimization/data/or_library/port1.txt",
+      "assets": 31
+    },
+    {
+      "name": "port2",
+      "path": "portfolio_optimization/data/or_library/port2.txt",
+      "assets": 85
+    },
+    {
+      "name": "port3",
+      "path": "portfolio_optimization/data/or_library/port3.txt",
+      "assets": 89
+    },
+    {
+      "name": "port4",
+      "path": "portfolio_optimization/data/or_library/port4.txt",
+      "assets": 98
+    },
+    {
+      "name": "port5",
+      "path": "portfolio_optimization/data/or_library/port5.txt",
+      "assets": 225
+    }
+  ],
+  "alphas": [
+    0.25,
+    0.5,
+    0.75
+  ],
+  "variants": [
+    "one_plus_one",
+    "mu_plus_lambda",
+    "mu_comma_lambda"
+  ],
+  "initial_step_size": "0.1 / sqrt(n)",
+  "step_size_bounds": [
+    1e-08,
+    1.0
+  ],
+  "one_plus_one": {
+    "success_multiplier": "exp(1/3)",
+    "failure_multiplier": "exp(-1/12)"
+  },
+  "population": {
+    "mu": 10,
+    "lambda": 70,
+    "tau_prime": "1 / sqrt(2*n)",
+    "tau": "1 / sqrt(2*sqrt(n))"
+  },
+  "feasibility_tolerance": 1e-08,
+  "expected_cases": 15,
+  "expected_runs": 450
+}
