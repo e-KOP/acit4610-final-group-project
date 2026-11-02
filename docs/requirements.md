@@ -6,8 +6,8 @@ authority. It is not a submission report. The course PDF is not redistributed he
 
 ## Shared requirements (pages 1-2)
 
-- [ ] Use the pre-approved Canvas group; record group number and all names.
-- [ ] Provide one shareable GitHub repository with a separate folder per problem.
+- [x] Use the confirmed Group-8; record the group number and all names in the README.
+- [x] Provide one shareable GitHub repository with a separate folder per problem.
 - [ ] Share the repository and grant the instructor access. The specified window
   was week 44, **26 October-1 November 2026**; confirm this has been handled.
 - [ ] Provide weekly group updates with each member's percentage contribution,

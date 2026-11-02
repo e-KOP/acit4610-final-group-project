@@ -6,7 +6,7 @@ This is an implementation plan, not an experiment log or report draft.
 - [x] Create separate folders for both required problems.
 - [x] Bundle the eleven original benchmark files with source URLs and SHA-256 hashes.
 - [x] Record required experiments and leave group-selected BA settings unresolved.
-- [ ] Confirm the approved group number and member list.
+- [x] Confirm Group-8 and record all four members in the README.
 - [ ] Implement TSPLIB and portfolio loaders with independent validation tests.
 - [ ] Implement and validate TSP distances, four functions, and portfolio objectives.
 - [ ] Choose BA site/recruitment settings and record retention/scouting decisions.

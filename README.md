@@ -5,7 +5,11 @@ Evolution Strategies (ES) on constrained portfolio optimization.
 
 **Status: repository scaffold and benchmark data only.** Algorithms, experiment
 runners, tests of algorithm behavior, and results have not been implemented.
-Group number and members: to be confirmed against the approved Canvas group.
+
+**Group number:** Group-8
+
+**Group members:** Zhongye Xue, Syed Mohammad Abdur-Rahman Tirmizey,
+Jakob Andreas Amtedal, and Khoa Anh Huynh.
 
 ## 1. How the project is organized
 
