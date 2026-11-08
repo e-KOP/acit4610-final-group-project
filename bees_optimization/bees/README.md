@@ -1,14 +1,15 @@
-# Planned Python package: bees
+# Python modules: bees
 
-Create modules as their behavior is implemented; this directory has no solver yet.
+The TSP foundation was merged on 5 November 2026. Import the modules from the
+repository root using `bees_optimization.bees`.
 
-| Module | Responsibility |
-| --- | --- |
-| `data.py` | Load and validate original TSPLIB coordinates and metadata |
-| `tsp.py` | Rounded distances, tour objective, tour validation |
-| `functions.py` | Four benchmark definitions and bounds |
-| `neighborhoods.py` | Swap, segment reversal, continuous perturbation and clipping |
-| `bees_algorithm.py` | Site selection, recruitment, retention, scouting, budget, best record |
-| `experiments.py` | Load configuration and run the required independent seeds |
-| `output.py` | Per-run records, summary tables, convergence and solution plots |
-| `__main__.py` | Single-run, batch, and output commands once implemented |
+| Module | Responsibility | Status |
+| --- | --- | --- |
+| `tsplib.py` | TSPLIB loading, metadata checks, rounded distances, tour evaluation and validation | Implemented |
+| `initialization.py` | Uniformly shuffled tours with city 1 fixed and scout populations | Implemented |
+| `neighborhoods.py` | Swap and inclusive segment reversal with city 1 fixed | TSP implemented; continuous moves pending |
+| `algorithm.py` | Site selection, recruitment, retention, scouting, budget, and best record | TSP implemented |
+| `functions.py` | Four benchmark definitions and bounds | Planned |
+| `experiments.py` | Configuration loading, independent runs, timing, and provenance | Planned |
+| `output.py` | Per-run records, tables, and plots | Planned |
+| `__main__.py` | Single-run, batch, and output commands | Planned |

@@ -7,12 +7,16 @@ This is an implementation plan, not an experiment log or report draft.
 - [x] Bundle the eleven original benchmark files with source URLs and SHA-256 hashes.
 - [x] Record required experiments and leave group-selected BA settings unresolved.
 - [x] Confirm Group-8 and record all four members in the README.
-- [ ] Implement TSPLIB and portfolio loaders with independent validation tests.
-- [ ] Implement and validate TSP distances, four functions, and portfolio objectives.
-- [ ] Choose BA site/recruitment settings and record retention/scouting decisions.
-- [ ] Implement and test the two TSP neighborhoods and continuous BA.
+- [x] Implement TSPLIB loading, rounded distances, and tour validation.
+- [x] Implement both TSP neighborhoods, scout initialization, and core BA.
+- [x] Add six automated TSP tests and reproduce seed-42 eil51 trials with both moves.
+- [x] Document current TSP defaults and retention/scouting behavior.
+- [ ] Broaden TSPLIB, distance, neighborhood, and parameter-boundary tests.
+- [ ] Implement the portfolio loader, objectives, and independent validation tests.
+- [ ] Implement and validate all four continuous functions and continuous BA.
+- [ ] Confirm BA experiment settings and connect JSON configuration to the runner.
 - [ ] Implement and test common portfolio repair and all three ES variants.
-- [ ] Add single-run commands; verify solutions and exact evaluation counting.
+- [ ] Add a reusable single-run CLI with runtime and file exports; a tested TSP Python example is available.
 - [ ] Add batch commands, raw records, histories, and reproducibility metadata.
 - [ ] Run small pilot cases in separate output folders and inspect failures.
 - [ ] Pin dependencies and run all 650 required experiments.

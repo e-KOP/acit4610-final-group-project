@@ -3,8 +3,11 @@
 Study the Bees Algorithm (BA) on route planning and continuous functions, and
 Evolution Strategies (ES) on constrained portfolio optimization.
 
-**Status: repository scaffold and benchmark data only.** Algorithms, experiment
-runners, tests of algorithm behavior, and results have not been implemented.
+**Status: core TSP Bees Algorithm implemented.** TSPLIB loading, rounded
+Euclidean distances, tour validation, both neighborhoods, scout initialization,
+and budget-controlled search are available. Six automated tests pass, and
+single-seed `eil51` trials have been reproduced. Continuous BA, Portfolio ES,
+batch runners, saved experiment records, and figures remain to be implemented.
 
 **Group number:** Group-8
 
@@ -28,8 +31,8 @@ Read and validate original benchmark data
 | 2 | (1+1)-ES, (mu+lambda)-ES, and (mu,lambda)-ES for portfolio variance | [portfolio_optimization](portfolio_optimization/README.md) |
 
 Each problem follows the earlier assignments' layout: a small Python package,
-`configs/`, `data/`, `tests/`, and `results/`. Package folders currently contain
-responsibility maps, not placeholder algorithm implementations.
+`configs/`, `data/`, `tests/`, and `results/`. The `bees/` folder contains the
+TSP implementation; the `portfolio/` folder currently contains its module plan.
 
 ```text
 .
@@ -37,11 +40,11 @@ responsibility maps, not placeholder algorithm implementations.
 ├── requirements.txt
 ├── bees_optimization/
 │   ├── README.md
-│   ├── bees/                 # Planned BA, TSP, and function modules
+│   ├── bees/                 # TSP loading, initialization, neighborhoods, BA
 │   ├── configs/              # TSP and continuous experiment specifications
 │   ├── data/tsplib/          # Six original, decompressed .tsp files
-│   ├── tests/                # Validation checklist
-│   └── results/              # Required output inventory; no results yet
+│   ├── tests/                # Six automated tests and further validation checklist
+│   └── results/              # Output plan; raw experiment records not yet saved
 ├── portfolio_optimization/
 │   ├── README.md
 │   ├── portfolio/            # Planned ES, objective, and repair modules
@@ -56,9 +59,14 @@ responsibility maps, not placeholder algorithm implementations.
 
 ## 2. Algorithm design
 
-The problem READMEs describe the required representations, moves, constraints,
-and selection rules. These are implementation specifications, not claims that
-the algorithms are already available.
+The [Problem 1 README](bees_optimization/README.md) documents the implemented TSP
+search and the planned continuous extension. The [Problem 2 README](portfolio_optimization/README.md)
+specifies the ES work still to be implemented.
+
+The TSP search ranks sites by tour length, recruits neighbors from each original
+selected site, retains the best of that site and its recruits, and fills the
+remaining population slots with fresh scouts. A separate best-so-far record
+includes initialization. Every evaluated candidate counts toward the budget.
 
 Keep data loading, evaluation, variation, search, experiment orchestration,
 and output generation separate. Add modules when implementing their behavior;
@@ -80,8 +88,12 @@ Stop exactly at the budget, allowing an incomplete final iteration or batch.
 The initial project seed choice is **0-9**, matching assignment 2. The specification
 requires ten independent seeds; it does not prescribe these particular integers.
 Use the same list for compared variants. JSON files under each `configs/` folder
-record the design. BA population, site-selection, and recruitment counts are
-`null` until the group chooses them; configurations are not runnable yet.
+record the planned full experiment design. Their BA fields remain `null` and are
+not loaded by the current solver. The TSP function currently defaults to 30
+scouts, 10 selected sites, 3 elite sites, 10 recruits per elite site, and 5 per
+other selected site. Both trial runs below use these defaults. Confirm and wire
+the experiment configurations before running the full study. The function calls
+segment reversal `reverse`; the planned JSON label is `segment_reversal`.
 
 All eleven required datasets are bundled. See the [TSPLIB sources](bees_optimization/data/README.md)
 and [OR-Library sources](portfolio_optimization/data/README.md) for exact URLs and
@@ -90,8 +102,20 @@ they need no downloaded dataset.
 
 ## 4. Results and evaluation
 
-**No experiments have been run.** The required tables, plots, and per-run records
-are listed in the [BA output plan](bees_optimization/results/README.md) and
+Two **single-seed trials**, reproduced on 8 November 2026 with the TSP code from
+commit `d8a02d9`, give the following results. Both use `eil51`, seed **42**, the
+defaults above, and exactly **30,000 evaluations**. The initial best length is
+1,352 and the published optimum is 426.
+
+| Neighborhood | Final best tour length | Gap to optimum |
+| --- | ---: | ---: |
+| Swap (`swap`) | 622 | 46.01% |
+| Segment reversal (`reverse`) | 468 | 9.86% |
+
+These trials do not establish repeated-run performance and are not the required
+120-run TSP experiment. Raw trial records are not yet committed; the command
+below reproduces the lengths. Full tables, plots, and per-run records remain
+pending; see the [BA output plan](bees_optimization/results/README.md) and
 [ES output plan](portfolio_optimization/results/README.md).
 
 Record seeds, settings, evaluation counts, runtime, initial and final best values,
@@ -102,9 +126,8 @@ Keep pilot runs separate from the required experiments, and retain raw records.
 
 ## 5. Reproduce the repository setup
 
-Use **Python 3.10 or newer**. The current integrity-check script uses only the
-standard library; there are no third-party dependencies yet.
-The setup utility was checked with Python **3.12.3**.
+Use **Python 3.10 or newer**. The TSP implementation, tests, and integrity-check
+script use only the standard library. The checks below pass with Python **3.12.3**.
 
 ```bash
 git clone https://github.com/e-KOP/acit4610-final-group-project.git
@@ -113,21 +136,47 @@ python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install -r requirements.txt
 python scripts/verify_data.py
+python -m unittest discover -s bees_optimization/tests -v
 ```
 
 On Windows, activate with `.venv\Scripts\Activate.ps1`. The verifier checks all
 eleven bundled files against committed SHA-256 hashes; it does not run a solver
 or validate numerical algorithms. No network access is needed after cloning.
 
-Commands for one optimization run, all experiments, and figure reproduction will
-be added alongside their implementations. There is deliberately no working
-solver command at this point. Pin the versions of numerical and plotting
-libraries in `requirements.txt` when the group first uses them.
+Run the two `eil51` trials from the repository root (Bash):
+
+```bash
+python - <<'PY'
+from bees_optimization.bees.tsplib import (
+    load_tsplib, validate_tsplib, create_distance_matrix, validate_tour,
+)
+from bees_optimization.bees.algorithm import bees_algorithm
+
+metadata, coordinates = load_tsplib("bees_optimization/data/tsplib/eil51.tsp")
+validate_tsplib(metadata, coordinates)
+matrix = create_distance_matrix(coordinates)
+for neighborhood in ("swap", "reverse"):
+    result = bees_algorithm(
+        matrix, neighborhood=neighborhood, seed=42, max_evaluations=30000,
+    )
+    validate_tour(result["best_tour"], len(coordinates))
+    print(neighborhood, "length:", result["best_length"],
+          "evaluations:", result["evaluations"])
+PY
+```
+
+In PowerShell, save the Python block to a local script and run it with `python`.
+The function returns the best tour, best length, initial best, evaluation count,
+and history in memory. History starts after evaluating the initial population
+(evaluation 30 with default settings), then records every subsequent evaluation.
+Runtime measurement, file exports, batch commands, and plot reproduction remain
+pending. Pin numerical and plotting dependency versions when introduced.
 
 ## 6. Build the project step by step
 
-Start with the [development checklist](docs/development.md). The next task is
-implementing and validating the data loaders and objective functions.
+Start with the [development checklist](docs/development.md). Next steps are
+broader TSP validation, reproducible experiment output, continuous BA, and the
+Portfolio ES data, objective, and repair foundations.
 
 The [submission checklist](docs/requirements.md) maps the portfolio's shared
 requirements. The combined report is written by the group and stored in

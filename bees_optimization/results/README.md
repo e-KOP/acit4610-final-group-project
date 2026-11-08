@@ -1,7 +1,10 @@
 # Required BA outputs
 
-No results have been generated. Store future raw records, histories, tables, and
-figures here; use `scratch/` only for disposable local experiments.
+Two seed-42 `eil51` trials have been reproduced: swap length 622 and reversal
+length 468 at 30,000 evaluations, using the defaults documented in the root
+README. Raw trial records, full repeated-run results, tables, and figures are
+not yet saved here. Store future outputs here; use `scratch/` only for disposable
+local experiments.
 
 | Output | Required content |
 | --- | --- |

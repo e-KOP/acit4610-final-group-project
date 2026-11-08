@@ -1,9 +1,11 @@
 # Problem 1: Bees Algorithm for TSP and Continuous Optimization
 
-**Status: specification, data, and folder structure only.** Both Part A and
-Part B are required. No BA implementation or numerical results exist yet.
+**Status: core TSP BA implemented; continuous BA pending.** Part A includes
+TSPLIB processing, rounded distances, tour validation, both neighborhoods,
+initialization, and the search loop. Six automated tests pass. The required
+full experiment set, output pipeline, and Part B remain unfinished.
 
-## 1. How the search will work
+## 1. How the TSP search works
 
 ```text
 Initialize and evaluate scouts
@@ -14,9 +16,11 @@ Initialize and evaluate scouts
     -> repeat until 30,000 evaluations have been used
 ```
 
-Implement the BA of Pham and colleagues as covered in lectures. The group still
-needs to choose the site counts, recruitment counts, and exact retention policy.
-Use identical BA settings for the two TSP neighborhoods.
+The implemented search ranks sites by increasing tour length. Every recruited
+neighbor is generated from the original site, and the best of the site and its
+recruits is retained. Fresh random scouts fill the remaining population slots.
+The global best is stored separately. Use identical settings for both TSP moves.
+The continuous column below describes the required extension, not implemented code.
 
 ## 2. Algorithm design
 
@@ -62,11 +66,31 @@ tolerance. Known minimizing vectors must not be inserted into search.
 - Each run uses **30,000 evaluations**, including initialization. Record the
   initial best, history, and final best solution. Complete the budget even when
   progress stalls or the known minimum is reached.
-- `null` BA settings are unresolved group decisions, not usable defaults.
+- The JSON files describe planned experiments and are not read by the solver.
+  Their `null` BA fields still need confirmation for the full experiment set.
+
+Current `bees_algorithm` function defaults:
+
+| Parameter | Value |
+| --- | ---: |
+| `n_scouts` | 30 |
+| `n_selected` | 10 |
+| `n_elite` | 3 |
+| `n_elite_recruits` | 10 |
+| `n_other_recruits` | 5 |
+| `max_evaluations` | 30,000 |
+
+With these settings, a full iteration evaluates 65 recruits and 20 fresh scouts.
+The last iteration may be partial. The function accepts `swap` and `reverse`;
+`reverse` implements the JSON plan's `segment_reversal` neighborhood.
 
 ## 4. Results and evaluation
 
 The [output plan](results/README.md) lists all required tables and figures.
+Two seed-42 `eil51` trials with the defaults above return lengths **622** (swap)
+and **468** (segment reversal), both using exactly 30,000 evaluations. They were
+reproduced on 8 November 2026; full repeated-run experiments and raw-record
+exports remain pending. See the [root README](../README.md#4-results-and-evaluation).
 TSP gap is `100 * (tour_length - optimum) / optimum`; lower is better.
 For continuous functions the final objective is the error relative to zero,
 apart from numerical rounding. Retain the corresponding tour or vector.
@@ -75,6 +99,7 @@ apart from numerical rounding. Retain the corresponding tour or vector.
 
 From the repository root, run `python scripts/verify_data.py` to check the bundled
 files. See the [root setup instructions](../README.md#5-reproduce-the-repository-setup).
-Search, batch, and plotting commands will be documented when implemented.
-The [module plan](bees/README.md) and [validation checklist](tests/README.md)
-define the next implementation steps.
+The root README also gives the tested two-trial Python command. Run the six
+automated tests with `python -m unittest discover -s bees_optimization/tests -v`.
+Batch and plotting commands are still pending. The [module map](bees/README.md)
+and [validation checklist](tests/README.md) describe implemented and remaining work.

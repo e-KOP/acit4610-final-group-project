@@ -17,7 +17,9 @@ See [manifest.json](manifest.json) for provenance and checksums.
 
 Only gzip decompression was applied; coordinates and original text are unchanged.
 The files use EUC_2D. Headers, row counts, and unique city IDs were checked at
-acquisition. Distance and tour validation still need implementation.
+acquisition. Distance calculation and tour validation are now implemented in
+`bees_optimization/bees/tsplib.py`; broader parser and numerical test coverage
+remains on the validation checklist.
 
 References: [TSPLIB](https://comopt.ifi.uni-heidelberg.de/software/TSPLIB95/),
 [optimal lengths](https://comopt.ifi.uni-heidelberg.de/software/TSPLIB95/tsp/TSP-BEST.html),

@@ -1,4 +1,18 @@
-# Validation to implement
+# TSP tests and remaining validation
+
+Run from the repository root:
+
+```bash
+python -m unittest discover -s bees_optimization/tests -v
+```
+
+`test_algorithm.py` contains **six passing tests**, checked on 8 November 2026:
+site selection, recruitment with both moves, a complete 1,000-evaluation swap
+run, evaluation history, partial iterations, and an invalid neighborhood value.
+These tests also check selected tour-validity and objective-consistency cases.
+They do not yet cover every parameter boundary or the complete benchmark suite.
+
+Expand coverage against the following requirements as development proceeds:
 
 - TSPLIB NAME, TYPE=TSP, DIMENSION, EDGE_WEIGHT_TYPE=EUC_2D, and
   NODE_COORD_SECTION; exact row count and unique expected city IDs.
@@ -12,5 +26,4 @@
 - Best-so-far values never increase; saved solution reproduces the saved objective.
 - Fixed seed reproduces numerical outcomes; complete required case/seed coverage.
 
-No algorithm tests exist yet. Dataset checksums can already be checked with the
-root `scripts/verify_data.py` utility.
+Dataset checksums can also be checked with the root `scripts/verify_data.py` utility.
