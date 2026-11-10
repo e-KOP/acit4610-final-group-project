@@ -1,7 +1,11 @@
 import random
 
+# AI-assisted minimum-size checks; see docs/ai_usage.md.
+
 
 def swap_neighbor(tour, rng):
+    if len(tour) < 3:
+        raise ValueError("Swap requires at least 3 cities with city 1 fixed")
     neighbor = tour.copy()
 
     # Choose two different positions, excluding city 1
@@ -13,6 +17,8 @@ def swap_neighbor(tour, rng):
     return neighbor
 
 def reverse_neighbor(tour, rng):
+    if len(tour) < 3:
+        raise ValueError("Reversal requires at least 3 cities with city 1 fixed")
     neighbor = tour.copy()
 
     # Choose two positions, excluding city 1

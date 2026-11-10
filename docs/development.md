@@ -11,9 +11,9 @@ This is an implementation plan, not an experiment log or report draft.
 - [x] Implement both TSP neighborhoods, scout initialization, and core BA.
 - [x] Add six automated TSP tests and reproduce seed-42 eil51 trials with both moves.
 - [x] Document current TSP defaults and retention/scouting behavior.
-- [ ] Broaden TSPLIB, distance, neighborhood, and parameter-boundary tests.
+- [x] Broaden TSPLIB, distance, neighborhood, and parameter-boundary tests.
 - [ ] Implement the portfolio loader, objectives, and independent validation tests.
-- [ ] Implement and validate all four continuous functions and continuous BA.
+- [x] Implement and validate all four continuous functions and continuous BA.
 - [ ] Confirm BA experiment settings and connect JSON configuration to the runner.
 - [ ] Implement and test common portfolio repair and all three ES variants.
 - [ ] Add a reusable single-run CLI with runtime and file exports; a tested TSP Python example is available.

@@ -1,4 +1,4 @@
-
+# AI-assisted parser validation additions; see docs/ai_usage.md.
 from pathlib import Path
 import math
 
@@ -18,6 +18,8 @@ def load_tsplib(file_path):
                 continue
 
             if line == "NODE_COORD_SECTION":
+                if reading_coordinates:
+                    raise ValueError("Duplicate NODE_COORD_SECTION")
                 reading_coordinates = True
                 continue
 
@@ -27,9 +29,15 @@ def load_tsplib(file_path):
             if reading_coordinates:
                 parts = line.split()
 
+                if len(parts) != 3:
+                    raise ValueError("Expected city ID and two coordinates")
+
                 city_id = int(parts[0])
                 x = float(parts[1])
                 y = float(parts[2])
+
+                if not math.isfinite(x) or not math.isfinite(y):
+                    raise ValueError("City coordinates must be finite")
 
                 if city_id in coordinates:
                     raise ValueError(
@@ -42,6 +50,8 @@ def load_tsplib(file_path):
                 key, value = line.split(":", 1)
                 metadata[key.strip()] = value.strip()
 
+    if not reading_coordinates:
+        raise ValueError("Missing NODE_COORD_SECTION")
     return metadata, coordinates
 
 
@@ -68,6 +78,9 @@ def validate_tsplib(metadata, coordinates):
 
     # Check number of cities
     dimension = int(metadata["DIMENSION"])
+
+    if dimension < 2:
+        raise ValueError("TSP requires at least 2 cities")
 
     if len(coordinates) != dimension:
         raise ValueError(

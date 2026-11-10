@@ -1,4 +1,4 @@
-# TSP tests and remaining validation
+# BA validation
 
 Run from the repository root:
 
@@ -6,24 +6,21 @@ Run from the repository root:
 python -m unittest discover -s bees_optimization/tests -v
 ```
 
-`test_algorithm.py` contains **six passing tests**, checked on 8 November 2026:
-site selection, recruitment with both moves, a complete 1,000-evaluation swap
-run, evaluation history, partial iterations, and an invalid neighborhood value.
-These tests also check selected tour-validity and objective-consistency cases.
-They do not yet cover every parameter boundary or the complete benchmark suite.
+All **28 tests** pass on 10 November 2026 using Python 3.12.3 and the standard library.
 
-Expand coverage against the following requirements as development proceeds:
+| File | Coverage |
+| --- | --- |
+| `test_algorithm.py` | Original six TSP tests: selection, recruitment, execution, history, partial iterations, invalid neighborhood |
+| `test_tsp_data.py` | Six datasets; malformed TSPLIB input; rounded distances and closed tours; swap and reversal; invalid matrices; seed-42 full-budget regression results |
+| `test_search.py` | Independently counted objective calls and observed minima; rejected evaluations; original-site recruitment; boundary population settings; invalid count types and ranges in both adapters |
+| `test_continuous.py` | Four functions at minimizers and nonoptimal points; configuration bounds; independent perturbations and clipping; domain preservation; deterministic runs at dimensions 10 and 30 |
 
-- TSPLIB NAME, TYPE=TSP, DIMENSION, EDGE_WEIGHT_TYPE=EUC_2D, and
-  NODE_COORD_SECTION; exact row count and unique expected city IDs.
-- Rounded Euclidean distances, symmetry, diagonal zeros, and return-edge inclusion.
-- Every output tour contains every city once and starts with city 1.
-- Both moves preserve permutations and keep the first city fixed.
-- Each continuous function agrees with SFU at its minimizer and another point.
-- Continuous initialization and neighbors remain within their declared bounds.
-- Every evaluated candidate counts, including initialization, rejection, and scouts.
-- Incomplete final iteration stops at exactly 30,000 evaluations.
-- Best-so-far values never increase; saved solution reproduces the saved objective.
-- Fixed seed reproduces numerical outcomes; complete required case/seed coverage.
+The full-budget TSP regression retains eil51 lengths 622 for swap and 468 for
+segment reversal at seed 42. Additional manual smoke checks cover all eight
+continuous function/dimension combinations at 30,000 evaluations each. These
+checks do not replace the required multi-seed experiments.
 
-Dataset checksums can also be checked with the root `scripts/verify_data.py` utility.
+Remaining validation concerns the experiment layer: configuration loading,
+per-run exports, runtime provenance, complete case/seed coverage, and plots
+recomputed from saved results. Dataset integrity can be checked separately with
+`python scripts/verify_data.py`.

@@ -3,10 +3,11 @@
 Study the Bees Algorithm (BA) on route planning and continuous functions, and
 Evolution Strategies (ES) on constrained portfolio optimization.
 
-**Status: core TSP Bees Algorithm implemented.** TSPLIB loading, rounded
-Euclidean distances, tour validation, both neighborhoods, scout initialization,
-and budget-controlled search are available. Six automated tests pass, and
-single-seed `eil51` trials have been reproduced. Continuous BA, Portfolio ES,
+**Status: TSP and continuous Bees Algorithm implemented.** Both use a shared
+search loop with exact evaluation budgets. TSP includes validated TSPLIB loading
+and both neighborhoods; continuous search supports Sphere, Rosenbrock, Rastrigin,
+and Ackley at dimensions 10 and 30. All 28 automated tests pass, and all eight
+continuous cases passed single-seed 30,000-evaluation smoke checks. Portfolio ES,
 batch runners, saved experiment records, and figures remain to be implemented.
 
 **Group number:** Group-8
@@ -32,7 +33,7 @@ Read and validate original benchmark data
 
 Each problem follows the earlier assignments' layout: a small Python package,
 `configs/`, `data/`, `tests/`, and `results/`. The `bees/` folder contains the
-TSP implementation; the `portfolio/` folder currently contains its module plan.
+TSP and continuous implementations; the `portfolio/` folder contains its module plan.
 
 ```text
 .
@@ -40,10 +41,10 @@ TSP implementation; the `portfolio/` folder currently contains its module plan.
 ├── requirements.txt
 ├── bees_optimization/
 │   ├── README.md
-│   ├── bees/                 # TSP loading, initialization, neighborhoods, BA
+│   ├── bees/                 # TSP, continuous functions and moves, shared BA
 │   ├── configs/              # TSP and continuous experiment specifications
 │   ├── data/tsplib/          # Six original, decompressed .tsp files
-│   ├── tests/                # Six automated tests and further validation checklist
+│   ├── tests/                # Numerical, input, budget, and regression tests
 │   └── results/              # Output plan; raw experiment records not yet saved
 ├── portfolio_optimization/
 │   ├── README.md
@@ -60,7 +61,7 @@ TSP implementation; the `portfolio/` folder currently contains its module plan.
 ## 2. Algorithm design
 
 The [Problem 1 README](bees_optimization/README.md) documents the implemented TSP
-search and the planned continuous extension. The [Problem 2 README](portfolio_optimization/README.md)
+and continuous search. The [Problem 2 README](portfolio_optimization/README.md)
 specifies the ES work still to be implemented.
 
 The TSP search ranks sites by tour length, recruits neighbors from each original
@@ -92,8 +93,9 @@ record the planned full experiment design. Their BA fields remain `null` and are
 not loaded by the current solver. The TSP function currently defaults to 30
 scouts, 10 selected sites, 3 elite sites, 10 recruits per elite site, and 5 per
 other selected site. Both trial runs below use these defaults. Confirm and wire
-the experiment configurations before running the full study. The function calls
-segment reversal `reverse`; the planned JSON label is `segment_reversal`.
+the experiment configurations before running the full study. Both `segment_reversal`
+and the original `reverse` name are accepted by the TSP function. Continuous BA
+uses the same default site and recruitment counts.
 
 All eleven required datasets are bundled. See the [TSPLIB sources](bees_optimization/data/README.md)
 and [OR-Library sources](portfolio_optimization/data/README.md) for exact URLs and
@@ -126,7 +128,7 @@ Keep pilot runs separate from the required experiments, and retain raw records.
 
 ## 5. Reproduce the repository setup
 
-Use **Python 3.10 or newer**. The TSP implementation, tests, and integrity-check
+Use **Python 3.10 or newer**. The BA implementations, tests, and integrity-check
 script use only the standard library. The checks below pass with Python **3.12.3**.
 
 ```bash
@@ -172,11 +174,31 @@ and history in memory. History starts after evaluating the initial population
 Runtime measurement, file exports, batch commands, and plot reproduction remain
 pending. Pin numerical and plotting dependency versions when introduced.
 
+Run one continuous case from the repository root:
+
+```bash
+python - <<'PY'
+from bees_optimization.bees.continuous import continuous_bees
+
+result = continuous_bees("sphere", dimension=10, seed=42)
+print("initial:", result["initial_best"], "best:", result["best_value"])
+print("evaluations:", result["evaluations"])
+print("vector:", result["best_vector"])
+PY
+```
+
+Use `sphere`, `rosenbrock`, `rastrigin`, or `ackley`, with dimension `10` or `30`.
+The result also contains `history` with the same evaluation indexing as TSP.
+Each coordinate is initialized uniformly, perturbed independently by up to 10%
+of its domain width, and clipped to its bounds. The neighborhood radius stays
+fixed throughout the run. Known minimizers are used only in objective tests.
+The 80-run continuous experiment remains pending; smoke checks are not the full study.
+
 ## 6. Build the project step by step
 
 Start with the [development checklist](docs/development.md). Next steps are
-broader TSP validation, reproducible experiment output, continuous BA, and the
-Portfolio ES data, objective, and repair foundations.
+reproducible experiment output and the Portfolio ES data, objective, and repair
+foundations.
 
 The [submission checklist](docs/requirements.md) maps the portfolio's shared
 requirements. The combined report is written by the group and stored in

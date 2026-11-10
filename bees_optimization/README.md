@@ -1,9 +1,11 @@
 # Problem 1: Bees Algorithm for TSP and Continuous Optimization
 
-**Status: core TSP BA implemented; continuous BA pending.** Part A includes
-TSPLIB processing, rounded distances, tour validation, both neighborhoods,
-initialization, and the search loop. Six automated tests pass. The required
-full experiment set, output pipeline, and Part B remain unfinished.
+**Status: TSP and continuous BA implemented.** Part A includes TSPLIB processing,
+rounded distances, tour validation, both neighborhoods, and initialization.
+Part B includes all four benchmark functions, their bounds, uniform initialization,
+and clipped perturbations at dimensions 10 and 30. Both adapters use the same
+search loop. All 28 automated tests pass; the full experiment set and output
+pipeline remain unfinished.
 
 ## 1. How the TSP search works
 
@@ -20,7 +22,7 @@ The implemented search ranks sites by increasing tour length. Every recruited
 neighbor is generated from the original site, and the best of the site and its
 recruits is retained. Fresh random scouts fill the remaining population slots.
 The global best is stored separately. Use identical settings for both TSP moves.
-The continuous column below describes the required extension, not implemented code.
+Both columns below describe implemented behavior.
 
 ## 2. Algorithm design
 
@@ -81,8 +83,9 @@ Current `bees_algorithm` function defaults:
 | `max_evaluations` | 30,000 |
 
 With these settings, a full iteration evaluates 65 recruits and 20 fresh scouts.
-The last iteration may be partial. The function accepts `swap` and `reverse`;
-`reverse` implements the JSON plan's `segment_reversal` neighborhood.
+The last iteration may be partial. The TSP function accepts `swap` and
+`segment_reversal`; `reverse` remains a compatible alias. Both adapters use
+the same defaults.
 
 ## 4. Results and evaluation
 
@@ -99,7 +102,28 @@ apart from numerical rounding. Retain the corresponding tour or vector.
 
 From the repository root, run `python scripts/verify_data.py` to check the bundled
 files. See the [root setup instructions](../README.md#5-reproduce-the-repository-setup).
-The root README also gives the tested two-trial Python command. Run the six
+The root README also gives tested TSP and continuous Python commands. Run the
 automated tests with `python -m unittest discover -s bees_optimization/tests -v`.
 Batch and plotting commands are still pending. The [module map](bees/README.md)
 and [validation checklist](tests/README.md) describe implemented and remaining work.
+
+## 6. Continuous API and validation
+
+```python
+from bees_optimization.bees.continuous import continuous_bees
+
+result = continuous_bees("rastrigin", dimension=30, seed=42)
+```
+
+The result contains `best_vector`, `best_value`, `initial_best`, `evaluations`,
+and `history`. Initialization counts toward the budget; history starts after
+initialization, then records every subsequent evaluation. Recruitment samples
+from the original site and retains its best candidate. Every complete generation
+replenishes unselected sites with fresh scouts. The perturbation radius is fixed
+at 10% of each coordinate's domain width, with no adaptive decay.
+
+Validation on 10 November 2026 covered all four functions at both dimensions,
+seed 42, with 30,000 evaluations per case. All returned finite objectives,
+in-bounds vectors, consistent objective values, and non-increasing histories.
+These eight smoke checks are separate from the required 80-run experiment; they
+do not establish convergence to the global optimum or complete the output pipeline.
