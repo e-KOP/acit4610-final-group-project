@@ -10,6 +10,8 @@ for the submission report; the group must write its own disclosure.
 
 | 2026-11-20 | Claude (Anthropic) | Pilot scripts for choosing BA settings (local only); Problem 1 experiment runner with per-run checks, raw-record export, compressed histories and metadata | `bees_optimization/bees/experiments.py` (entire file) | Built step by step and run by Jakob; group review pending |
 
+| 2026-11-20 | Claude (Anthropic) | Pilot scripts for choosing BA settings (local only); Problem 1 experiment runner with per-run checks, raw-record export, compressed histories and metadata; summary tables and the five required figures | `bees_optimization/bees/experiments.py`, `bees_optimization/bees/output.py` (entire files) | Built step by step and run by Jakob; group review pending |
+
 No optimization algorithm, experiment result, or submission-report prose was
 generated during setup. Benchmark file contents come from the named original
 sources, not AI. The initial verification utility is AI-generated and marked in
