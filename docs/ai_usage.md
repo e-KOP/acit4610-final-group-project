@@ -8,8 +8,6 @@ for the submission report; the group must write its own disclosure.
 | 2026-11-02 | OpenAI Codex | Repository structure, technical documentation, experiment specification files, benchmark acquisition, checksum verification utility | `scripts/verify_data.py` (entire file) | Pending group review |
 | 2026-11-10 | OpenAI Codex | Review TSP; extract shared BA loop; implement continuous objectives and search; add numerical and behavioral tests; update technical documentation | Under `bees_optimization/`: `bees/search.py` extracted and adapted from the group's TSP loop; `bees/algorithm.py` adapter; new `bees/functions.py`, `bees/continuous.py`; validation additions in `bees/tsplib.py`, `bees/neighborhoods.py`; new `tests/test_continuous.py`, `tests/test_search.py`, `tests/test_tsp_data.py` | Pending group review |
 
-| 2026-11-20 | Claude (Anthropic) | Pilot scripts for choosing BA settings (local only); Problem 1 experiment runner with per-run checks, raw-record export, compressed histories and metadata | `bees_optimization/bees/experiments.py` (entire file) | Built step by step and run by Jakob; group review pending |
-
 | 2026-11-20 | Claude (Anthropic) | Pilot scripts for choosing BA settings (local only); Problem 1 experiment runner with per-run checks, raw-record export, compressed histories and metadata; summary tables and the five required figures | `bees_optimization/bees/experiments.py`, `bees_optimization/bees/output.py` (entire files) | Built step by step and run by Jakob; group review pending |
 
 No optimization algorithm, experiment result, or submission-report prose was
