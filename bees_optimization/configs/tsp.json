@@ -58,13 +58,15 @@
   ],
   "fixed_start_city": 1,
   "ba": {
-    "scout_population": null,
-    "selected_sites": null,
-    "elite_sites": null,
-    "elite_recruits": null,
-    "other_site_recruits": null,
-    "retention_policy": null,
-    "scouting_policy": null
+    "scout_population": 10,
+    "selected_sites": 3,
+    "elite_sites": 1,
+    "elite_recruits": 10,
+    "other_site_recruits": 5,
+    "retention_policy": "Every recruit is generated from the original site; the site keeps the best of itself and its recruits (strict improvement only).",
+    "scouting_policy": "Each iteration replaces the unselected sites with fresh uniformly random solutions.",
+    "evaluations_per_full_iteration": 27,
+    "selection_note": "Setting B from a pilot on seeds 100-104 (not the reported seeds 0-9), compared with 30/10/3/10/5 and 6/2/1/5/3 on all six instances and both moves, and on all eight continuous cases. Provisional until confirmed by the group."
   },
   "expected_runs": 120
 }
