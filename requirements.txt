@@ -1,8 +1,5 @@
-# The repository scaffold uses Python 3.10+ and the standard library only.
-# Add exact, tested dependency versions when implementation begins.
-
-# Python 3.11+ (matplotlib 3.11.2 requires it). Algorithms, tests and the
-# experiment runner use only the standard library; matplotlib is needed only
-# to build the Problem 1 figures (bees_optimization.bees.output).
-# Tested with Python 3.13 and matplotlib 3.11.2.
+# Python 3.13 - tested environment
+# NumPy for Evolution Strategies
+numpy==2.2.6
+# Matplotlib for figures and convergence plots
 matplotlib==3.11.2

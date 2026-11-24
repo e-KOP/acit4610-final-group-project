@@ -1,175 +1,86 @@
-
 # ACIT4610 Final Group Project: Bees Algorithm and Evolution Strategies
 
-Study the Bees Algorithm (BA) on route planning and continuous optimization, and Evolution Strategies (ES) on constrained portfolio optimization.
+This repository contains the two problems of the ACIT4610 final group project.
+**Problem 1** applies the **Bees Algorithm (BA)** to the Travelling Salesman
+Problem (Part A) and to four continuous benchmark functions (Part B). **Problem 2**
+applies three **Evolution Strategies (ES)**, (1+1)-ES, (mu+lambda)-ES and
+(mu,lambda)-ES, to minimise portfolio variance under long-only, budget and
+minimum-return constraints. Group number: **Group-8**. Group members: **Zhongye
+Xue, Syed Mohammad Abdur-Rahman Tirmizey, Jakob Andreas Amtedal, Khoa Anh Huynh**.
 
-**Status: Problem 1 implementation, experiments, and validation completed.**
+All **650 required runs** were completed with exactly 30,000 objective evaluations
+each: **200 BA runs**, all passing independent validation, and **450 ES runs** with
+450 valid final allocations. Each problem saves raw records with provenance,
+checks them independently, and generates its summary tables and figures from the
+saved records.
 
-The Bees Algorithm is implemented for six Travelling Salesman Problem (TSP) instances using swap and segment reversal neighborhoods, and four continuous benchmark functions at dimensions 10 and 30. Both implementations share the same search loop with exact objective evaluation-budget accounting.
+| Problem | Algorithm | Parts / variants | Runs | Folder |
+| --- | --- | --- | ---: | --- |
+| 1 | Bees Algorithm | Part A: TSP (swap, segment reversal); Part B: continuous functions | 200 | [bees_optimization](bees_optimization/README.md) |
+| 2 | Evolution Strategies | (1+1)-ES, (mu+lambda)-ES, (mu,lambda)-ES | 450 | [portfolio_optimization](portfolio_optimization/README.md) |
 
-All **200 required Problem 1 experiments** have been executed and their raw results committed. Summary tables and figures have been generated and independently verified.
-
-The complete Problem 1 test suite contains **50 passing automated tests**, including 22 additional tests for independent result validation, experiment execution, statistical processing, and output reproduction.
-
-Problem 2, Evolution Strategies for constrained portfolio optimization, remains to be implemented.
-
-**Group number:** Group-8
-
-**Group members:** Zhongye Xue, Syed Mohammad Abdur-Rahman Tirmizey, Jakob Andreas Amtedal, and Khoa Anh Huynh.
-
-## 1. Project organization
-
-The project follows the workflow:
+Both problems follow the same workflow:
 
 ```text
 Read and validate original benchmark data
     -> implement and validate objective functions
     -> implement optimization algorithms
-    -> execute independent seeds with fixed evaluation budgets
+    -> execute seeds 0-9 with exactly 30,000 objective evaluations
     -> save solutions and best-so-far histories
     -> generate statistical summaries and figures
     -> independently validate experimental results
-    -> analyze and document performance
 ```
 
-| Problem | Scope | Folder |
+The sections below summarise each problem; each problem folder has its own
+README with the full design, worked examples, result tables and figures.
+
+---
+
+## Problem 1: Bees Algorithm
+
+The BA minimises the rounded tour length of six TSPLIB instances (**Part A**) and
+the value of Sphere, Rosenbrock, Rastrigin and Ackley at D = 10 and 30
+(**Part B**). Both parts share one search loop (`bees/search.py`); representation,
+initialization, objective and neighbourhood differ.
+
+### 1.1 How the next population is created
+
+Example configuration: **berlin52**, **segment reversal**, seed **1**, Setting B
+with **10 scouts, 3 selected sites, 1 elite site, 10 elite recruits and 5 recruits
+per other selected site**: 27 evaluations per complete iteration, so
+10 initial + 1,110 x 27 = 29,980, then 20 final recruits.
+
+```text
+Initialize and evaluate 10 scouts
+    -> rank by objective; select 3 sites, the best 1 is elite
+    -> recruit 10 neighbours at the elite site and 5 at each other selected site,
+       always from the ORIGINAL site
+    -> each site keeps the best of itself and its recruits
+    -> replace the 7 unselected sites with fresh random scouts
+    -> update the global best-so-far after every evaluation
+    -> repeat until exactly 30,000 evaluations
+```
+
+### 1.2 Algorithm design
+
+| Block | Part A: TSP | Part B: continuous functions |
 | --- | --- | --- |
-| 1 | Bees Algorithm for TSP and continuous functions | [bees_optimization](bees_optimization/README.md) |
-| 2 | (1+1)-ES, (mu+lambda)-ES, and (mu,lambda)-ES for portfolio variance minimization | [portfolio_optimization](portfolio_optimization/README.md) |
+| Encoding | Permutation of cities, city 1 fixed first | Real vector, D = 10 or 30 |
+| Initialization | Uniform random permutations | Uniform within bounds |
+| Neighbourhood | One random swap or one segment reversal | Uniform change of +/-10% of the domain width per coordinate, fixed radius |
+| Repair / validity | Every city exactly once | Clip to bounds |
+| Evaluation | Rounded EUC_2D tour length with the return edge | Unshifted function value; minimum 0 |
+| Replacement | Site keeps the best of itself and its recruits; fresh scouts elsewhere | Same |
+| Termination | Exactly 30,000 evaluations, incomplete final iteration allowed | Same |
 
-Each problem has its own Python package, configuration files, datasets, tests, and experimental results.
+TSP distances use the TSPLIB rule `d(i,j) = floor(sqrt((xi-xj)^2 + (yi-yj)^2) + 0.5)`,
+rounded per edge before summation. Python's `round()` is not used because its
+ties-to-even behaviour differs. Published optimal tours and known minimizers are
+used for evaluation and tests only, never inside the search. See
+[Problem 1, section 2](bees_optimization/README.md#2-algorithm-design) for the
+function definitions and the distance and neighbourhood examples.
 
-```text
-.
-├── README.md
-├── requirements.txt
-├── bees_optimization/
-│   ├── README.md
-│   ├── bees/                 # BA solver, experiments, output, validation
-│   ├── configs/              # TSP and continuous experiment settings
-│   ├── data/tsplib/          # Six original TSP benchmark datasets
-│   ├── tests/                # Algorithm and experiment regression tests
-│   └── results/
-│       ├── raw/              # 200 saved experiment records and metadata
-│       ├── tables/           # CSV and Markdown summaries
-│       └── figures/          # Convergence, route, and distribution plots
-├── portfolio_optimization/
-│   ├── README.md
-│   ├── portfolio/            # Planned ES implementation modules
-│   ├── configs/              # Portfolio experiment specification
-│   ├── data/or_library/      # Five original portfolio datasets
-│   ├── tests/                # Portfolio validation checklist
-│   └── results/              # Required portfolio output specification
-├── scripts/
-│   └── verify_data.py        # Original dataset integrity verification
-├── docs/
-│   ├── requirements.md       # Assignment requirements checklist
-│   ├── development.md        # Implementation progress
-│   └── ai_usage.md           # AI assistance documentation
-└── report/                   # Group-authored submission report
-```
-
-## 2. Algorithm design
-
-### Problem 1: Bees Algorithm
-
-The Bees Algorithm uses a population of scout solutions, selected sites, neighborhood recruitment, and random exploration.
-
-The search follows these steps:
-
-1. Generate and evaluate the initial scout population.
-2. Rank solutions by objective value.
-3. Select elite and other promising sites.
-4. Recruit neighborhood solutions around each selected site.
-5. Retain the best solution from each site and its recruits.
-6. Generate fresh random scouts to replenish the population.
-7. Update the separately maintained global best-so-far solution.
-8. Repeat until the exact evaluation budget is exhausted.
-
-Every recruited neighbor is generated from the original selected site, rather than from the previously improved neighbor.
-
-The global best-so-far solution is maintained separately from the current population. Every evaluated candidate counts toward the budget, including rejected solutions and newly generated scouts.
-
-The shared implementation is located in `bees_optimization/bees/search.py`.
-
-### TSP implementation
-
-TSP solutions are permutations containing each city exactly once, with city 1 fixed at the beginning.
-
-Two neighborhood operators are implemented:
-
-- **Swap:** Exchange two randomly selected city positions, excluding the fixed starting city.
-- **Segment reversal:** Reverse a randomly selected contiguous segment, excluding the fixed starting city.
-
-The implementation uses TSPLIB EUC_2D distances, calculated by rounding each Euclidean edge distance separately:
-
-```text
-distance(i,j) = floor(sqrt((xi-xj)^2 + (yi-yj)^2) + 0.5)
-```
-
-The objective is the total tour length, including the final edge returning to the starting city.
-
-Python's built-in `round()` is not used because its ties-to-even behavior differs from the required TSPLIB rounding convention.
-
-Published optimal tour lengths are used only for performance evaluation, never to initialize or guide the search.
-
-### Continuous optimization
-
-The continuous BA implementation supports four benchmark functions:
-
-| Function | Bounds per coordinate | Global minimum | Minimizer |
-| --- | --- | ---: | --- |
-| Sphere | [-5.12, 5.12] | 0 | All zeros |
-| Rosenbrock | [-5, 10] | 0 | All ones |
-| Rastrigin | [-5.12, 5.12] | 0 | All zeros |
-| Ackley | [-32.768, 32.768] | 0 | All zeros |
-
-Each solution is a real-valued vector of dimension 10 or 30.
-
-Initialization samples every coordinate independently and uniformly within the permitted bounds.
-
-Neighborhood search independently perturbs each coordinate by up to 10% of its allowed domain width. Modified coordinates are clipped to their bounds.
-
-The perturbation radius remains fixed throughout optimization, without adaptive decay.
-
-Known minimizing vectors are used for numerical testing only and are never inserted into the optimization process.
-
-See [Problem 1](bees_optimization/README.md) for the complete definitions and implementation details.
-
-### Problem 2: Evolution Strategies
-
-Problem 2 minimizes portfolio variance subject to long-only allocation, budget, and minimum-return constraints.
-
-Three Evolution Strategies are required:
-
-- (1+1)-ES with scalar step-size adaptation.
-- (mu+lambda)-ES with elitist population selection.
-- (mu,lambda)-ES with offspring-only population selection.
-
-All three variants must use common portfolio data loading, covariance calculation, objective evaluation, feasibility checking, and constraint repair.
-
-The portfolio implementation and its 450 required experimental runs remain outstanding in the current project branch.
-
-See [Problem 2](portfolio_optimization/README.md) for the detailed specification.
-
-## 3. Instances and experiment parameters
-
-The assignment requires 650 experimental runs in total.
-
-| Experiment | Cases | Variants | Seeds per case/variant | Required runs |
-| --- | ---: | ---: | ---: | ---: |
-| TSP | 6 instances | 2 neighborhoods | 10 | 120 |
-| Continuous BA | 4 functions x 2 dimensions | 1 | 10 | 80 |
-| Portfolio ES | 5 datasets x 3 return targets | 3 | 10 | 450 |
-| **Total** | | | | **650** |
-
-Every run uses exactly **30,000 objective evaluations**, including initialization and rejected candidates.
-
-The full project therefore requires 19,500,000 objective evaluations.
-
-The experiment design uses seeds 0-9. These seeds are a project choice; the assignment requires ten independent runs per configuration.
-
-### TSP instances
+### 1.3 Instances and experiment parameters
 
 | Instance | Cities | Distance type | Optimal tour length |
 | --- | ---: | --- | ---: |
@@ -180,76 +91,37 @@ The experiment design uses seeds 0-9. These seeds are a project choice; the assi
 | kroA100 | 100 | EUC_2D | 21,282 |
 | ch150 | 150 | EUC_2D | 6,528 |
 
-### Bees Algorithm experimental settings
+| Function | Bounds per coordinate | Minimizer | Dimensions |
+| --- | --- | --- | --- |
+| Sphere | [-5.12, 5.12] | All zeros | 10, 30 |
+| Rosenbrock | [-5, 10] | All ones | 10, 30 |
+| Rastrigin | [-5.12, 5.12] | All zeros | 10, 30 |
+| Ackley | [-32.768, 32.768] | All zeros | 10, 30 |
 
-The completed 200 Problem 1 experiments use the following provisional BA configuration, referred to as Setting B:
-
-| Parameter | Value |
-| --- | ---: |
-| `n_scouts` | 10 |
-| `n_selected` | 3 |
-| `n_elite` | 1 |
-| `n_elite_recruits` | 10 |
-| `n_other_recruits` | 5 |
-| `max_evaluations` | 30,000 |
-
-Each full iteration evaluates 20 recruited neighbors and 7 fresh scouts, totaling 27 objective evaluations.
-
-The settings were selected through preliminary pilot comparisons using seeds 100-104, separate from the final experimental seeds 0-9.
-
-The pilot compared three BA configurations:
-
-- Setting A: 30/10/3/10/5
-- Setting B: 10/3/1/10/5
-- Setting C: 6/2/1/5/3
-
-The selected configuration remains provisional until the group confirms the original pilot evidence.
-
-The BA solver functions retain their original defaults of 30/10/3/10/5 when called directly. The experiment runner instead loads the selected settings from the JSON configuration files and explicitly passes them to the solver.
-
-The TSP implementation accepts both `swap` and `segment_reversal`, while `reverse` remains a compatible alias.
-
-Experiment configurations are stored in:
-
-- [TSP configuration](bees_optimization/configs/tsp.json)
-- [Continuous configuration](bees_optimization/configs/continuous.json)
-- [Portfolio configuration](portfolio_optimization/configs/experiments.json)
-
-### Benchmark data
-
-All eleven required original benchmark datasets are included.
-
-The repository contains six TSPLIB instances and five OR-Library portfolio datasets.
-
-Dataset sources, transformations, and SHA-256 checksums are documented in:
-
-- [TSPLIB sources](bees_optimization/data/README.md)
-- [OR-Library sources](portfolio_optimization/data/README.md)
-
-The continuous benchmark functions are evaluated directly from their mathematical definitions and do not require external datasets.
-
-## 4. Results and evaluation
-
-### Preliminary TSP implementation results
-
-Two initial single-seed experiments were reproduced on 8 November 2026 using the original default BA settings.
-
-Both used `eil51`, seed 42, and exactly 30,000 objective evaluations.
-
-The initial best tour length was 1,352, and the published optimum was 426.
-
-| Neighborhood | Final best tour length | Gap to optimum |
+| Parameter | Setting B (experiments) | Solver default |
 | --- | ---: | ---: |
-| Swap | 622 | 46.01% |
-| Segment reversal | 468 | 9.86% |
+| `n_scouts` / `n_selected` / `n_elite` | 10 / 3 / 1 | 30 / 10 / 3 |
+| `n_elite_recruits` / `n_other_recruits` | 10 / 5 | 10 / 5 |
+| `max_evaluations` | 30,000 | 30,000 |
 
-These preliminary trials were used to verify the original implementation. They are separate from the completed experimental study using Setting B.
+Part A: 6 instances x 2 neighbourhoods x seeds 0-9 = **120 runs**. Part B: 4
+functions x 2 dimensions x seeds 0-9 = **80 runs**. Both parts use the same
+Setting B, loaded from [tsp.json](bees_optimization/configs/tsp.json) and
+[continuous.json](bees_optimization/configs/continuous.json). It was selected
+through pilot comparisons on seeds 100-104, separate from the reported seeds,
+against Setting A (30/10/3/10/5) and Setting C (6/2/1/5/3). **The selection
+remains provisional until the group confirms the pilot evidence.** The six
+TSPLIB files are bundled unchanged apart from gzip decompression; see
+[TSPLIB sources](bees_optimization/data/README.md).
 
-### Completed TSP experiments
+### 1.4 Results and evaluation
 
-The full TSP study includes six datasets, two neighborhoods, and ten independent seeds, totaling **120 runs**.
+**Part A: 120 runs; Part B: 80 runs; all 200 validated on 22 November 2026.**
+Each value summarises 10 runs; lower is better. Runtime is the search call only.
 
-Mean percentage gaps to the published optimum:
+#### Part A: TSP
+
+Mean gap to the published optimum, `gap (%) = 100 * (tour_length - optimum) / optimum`:
 
 | Instance | Swap mean gap (%) | Segment reversal mean gap (%) |
 | --- | ---: | ---: |
@@ -260,286 +132,263 @@ Mean percentage gaps to the published optimum:
 | kroA100 | 108.79 | 22.98 |
 | ch150 | 153.47 | 52.32 |
 
-The optimality gap is calculated as:
+![berlin52: mean best-so-far tour length for swap and segment reversal](bees_optimization/results/figures/tsp_convergence_berlin52.png)
 
-```text
-gap (%) = 100 * (tour_length - optimum) / optimum
-```
+- Segment reversal produced a shorter final tour than swap in all **60 of 60**
+  paired instance-seed comparisons. The best berlin52 tour (segment reversal,
+  seed 1) has length 7,833, a gap of 3.86%.
+- Gaps grow with instance size under the fixed budget, up to 52.32% on ch150 with
+  segment reversal.
+- Two preliminary eil51 trials (8 November 2026, seed 42, original default
+  settings, initial best 1,352) gave 622 (swap, 46.01%) and 468 (reversal, 9.86%).
+  They are separate from the Setting B study.
 
-Segment reversal produced a shorter final tour than swap in all 60 paired instance-seed comparisons.
+#### Part B: Continuous functions
 
-The results show that segment reversal performs better than swap under the tested BA settings and evaluation budget.
+Mean final objective value (the minimum of every function is 0):
 
-Performance also deteriorates for larger TSP instances, particularly `ch150`, where the segment reversal neighborhood achieved a mean gap of 52.32%.
-
-These findings describe performance under the tested configuration rather than establishing general superiority across other algorithms or parameter settings.
-
-### Completed continuous experiments
-
-The continuous study includes four benchmark functions, dimensions 10 and 30, and ten seeds per case, totaling **80 runs**.
-
-Mean final objective values:
-
-| Function | Dimension 10 | Dimension 30 |
+| Function | D = 10 | D = 30 |
 | --- | ---: | ---: |
 | Sphere | 0.4368 | 5.731 |
 | Rosenbrock | 89.66 | 2431 |
 | Rastrigin | 39.13 | 267.5 |
 | Ackley | 6.216 | 10.58 |
 
-All four functions have a global minimum of zero.
+![D=30: distribution of final objective values for the four functions](bees_optimization/results/figures/continuous_d30_boxplots.png)
 
-The experiments demonstrate improvement from initialization, but final objectives generally become worse as dimensionality increases.
+- Every case improves strongly on its initial scouts, but final values become
+  much worse from D = 10 to D = 30, and the fixed neighbourhood radius limits fine
+  local search near a minimum. No case reaches the global minimum.
 
-The fixed neighborhood radius also limits fine-grained local search near a minimum. The results do not establish convergence to the theoretical global optimum.
+Best, mean, standard deviation, initial objective and runtime for every case, and
+the ch150, route and Rastrigin figures, are in
+[Problem 1, section 4](bees_optimization/README.md#4-results-and-evaluation).
+These results describe the implemented BA under Setting B and a fixed
+30,000-evaluation budget; they do not establish convergence to the global optimum.
 
-### Saved experiment records
+### 1.5 Reproduce Problem 1
 
-The following files contain the complete Problem 1 raw results:
+After [installation](#installation-and-project-structure), from the repository root:
 
-- `bees_optimization/results/raw/tsp_runs.jsonl`
-- `bees_optimization/results/raw/continuous_runs.jsonl`
-- `bees_optimization/results/raw/metadata.json`
+```bash
+python -m unittest discover -s bees_optimization/tests -v   # 50 tests
 
-Each experimental record contains:
+# Part A: one run (berlin52, segment reversal, seed 1 -> length 7833)
+python -m bees_optimization.bees.experiments tsp --instances berlin52 --neighborhoods segment_reversal --seeds 1
+# Part B: one run
+python -m bees_optimization.bees.experiments continuous --functions sphere --dimensions 10 --seeds 0
 
-- Problem instance or benchmark function.
-- Neighborhood or dimension.
-- Random seed.
-- BA configuration.
-- Initial best objective.
-- Final best objective and solution.
-- Number of objective evaluations.
-- Runtime in seconds.
-- Compressed best-so-far history.
+# Rebuild tables and figures from saved records, then validate all 200 records
+python -m bees_optimization.bees.output
+python -m bees_optimization.bees.validate_results
 
-The metadata includes the experiment environment, source revision, configurations, and dataset checksums.
+# All 200 runs (overwrites bees_optimization/results/raw/)
+python -m bees_optimization.bees.experiments all
+```
 
-The recorded runtime measures the optimization call only; data loading is excluded.
+Validation includes **50 passing tests** (22 November 2026) and independent
+validation of all 200 records. Subset runs are written to
+`bees_optimization/results/scratch/`. **Warning:** `experiments all` can overwrite
+the committed raw records; use a separate working copy to rerun the full study.
 
-### Statistical summaries
+---
 
-Results are aggregated over ten independent seeds.
+## Problem 2: Portfolio Optimization via Evolution Strategies
 
-The summary tables include best, mean, and sample standard deviation of final objective values, as well as initial objective and runtime statistics.
+Three ES variants search for long-only weights that minimise **portfolio
+variance** `w^T Sigma w` subject to `w_i >= 0`, `sum(w) = 1` and
+`r^T w >= R_min`. All three share data loading, covariance construction, repair,
+feasibility checks and the evaluation counter, and return the best feasible
+allocation in a separate archive.
 
-Sample standard deviation uses the `n - 1` convention.
+### 2.1 How the next allocation is created
 
-Convergence curves are aligned by objective evaluation count, not by algorithm iteration. Compressed histories are forward-filled when constructing the shared evaluation grid.
+Example configuration: `port1_alpha050`, **31 assets**, **R_min =
+0.007184532258065**, seed **0**. The initial step size is `0.1 / sqrt(31) = 0.01796`.
 
-Full-precision tables are saved as CSV, with human-readable Markdown versions also provided.
+```text
+Shared:       z -> repair z into feasible weights w -> evaluate w^T Sigma w
+              -> update the archive if w is feasible and better
 
-### Generated figures
+(1+1)-ES:     child = repair(parent + sigma * N(0, I))
+              keep the child only if its variance is strictly lower
+              sigma *= exp(1/3) after success, exp(-1/12) otherwise
 
-Five required figures have been generated:
+(mu+lambda)-ES and (mu,lambda)-ES, mu = 10, lambda = 70:
+              two different random parents -> mean weights, geometric-mean step sizes
+              -> self-adapt step sizes -> mutate -> repair -> evaluate
+              plus:  best 10 of parents + offspring (elitist)
+              comma: best 10 of offspring only (archive not used for selection)
+              10 initial + 428 generations x 70 + a final partial batch of 30
+```
 
-| Figure | Description |
-| --- | --- |
-| `tsp_convergence_berlin52.png` | Mean TSP convergence for both neighborhoods |
-| `tsp_convergence_ch150.png` | Mean TSP convergence for the largest TSP instance |
-| `berlin52_best_route.png` | Best recorded berlin52 route, including return edge |
-| `rastrigin_d10_convergence.png` | Mean continuous convergence for Rastrigin, D=10 |
-| `continuous_d30_boxplots.png` | Distribution of final objectives for all four functions at D=30 |
+### 2.2 Algorithm design
 
-The figures are stored in `bees_optimization/results/figures/`.
+| Block | (1+1)-ES | (mu+lambda)-ES | (mu,lambda)-ES |
+| --- | --- | --- | --- |
+| Population | 1 parent, 1 child per trial | 10 parents, 70 offspring | 10 parents, 70 offspring |
+| Initialization | Uniform [0, 1] weights, repaired | Same for each parent | Same for each parent |
+| Step size | Scalar, 1/5th success rule | Self-adaptive vector | Self-adaptive vector |
+| Recombination | None | Mean of weights, geometric mean of step sizes | Same |
+| Mutation | `sigma * N(0, 1)` per weight | `sigma'_i * N(0, 1)` after adaptation | Same |
+| Repair | Simplex projection, then return repair | Same | Same |
+| Replacement | Strictly lower variance only | Best 10 of parents + offspring | Best 10 of offspring |
+| Termination | Exactly 30,000 evaluations | Same, final partial batch archived | Same |
 
-See [Problem 1 results](bees_optimization/results/README.md) for the complete output inventory and reproduction instructions.
+Step sizes start at `0.1/sqrt(n)` and are clamped to `[1e-8, 1]`; the population
+variants use `tau' = 1/sqrt(2n)` and `tau = 1/sqrt(2 sqrt(n))`. A reported
+portfolio is feasible if `w_i >= -1e-8`, `abs(sum(w) - 1) <= 1e-8` and
+`r^T w >= R_min - 1e-8`.
 
-## 5. Installation and reproduction
+**Repair example.** With mean returns 2%, 6%, 10% and `R_min = 4%`, the vector
+`z = (0.7, 0.5, -0.1)` is projected to `q = (0.6, 0.4, 0.0)` with return 3.6%.
+The return repair mixes in the highest-return asset with `beta = 0.0625`, giving
+`w = (0.5625, 0.375, 0.0625)` and a return of exactly 4%. See
+[Problem 2, section 2](portfolio_optimization/README.md#2-algorithm-design) for
+the derivation and the implementation choices.
 
-### Requirements
+### 2.3 Instances and experiment parameters
 
-Use **Python 3.11 or newer**.
+| Dataset | Assets | Correlation records | R_min, alpha = 0.25 / 0.50 / 0.75 |
+| --- | ---: | ---: | --- |
+| port1 | 31 | 496 | 0.005344 / 0.007185 / 0.009025 |
+| port2 | 85 | 3,655 | 0.003567 / 0.005643 / 0.007718 |
+| port3 | 89 | 4,005 | 0.004048 / 0.005435 / 0.006822 |
+| port4 | 98 | 4,851 | 0.004454 / 0.006034 / 0.007615 |
+| port5 | 225 | 25,425 | -0.000137 / 0.001232 / 0.002602 |
 
-The optimization algorithms, experiment runner, dataset validation utility, and most tests use the Python standard library.
+`R_min(alpha) = (1-alpha)*R_eq + alpha*r_max`, with `R_eq` the equal-allocation
+return and `r_max` the highest asset return, gives **15 cases** (`port1_alpha025`
+to `port5_alpha075`). 15 cases x 3 variants x seeds 0-9 = **450 runs**, all with
+the same repair, seeds and budget, as recorded in
+[experiments.json](portfolio_optimization/configs/experiments.json). The five
+OR-Library files are bundled unchanged; see
+[OR-Library sources](portfolio_optimization/data/README.md). The metadata records
+source-file, configuration and dataset hashes, and `--resume` refuses to continue
+when any of them has changed.
 
-Matplotlib is required for generating figures and running the complete test suite.
+### 2.4 Results and evaluation
 
-The current project dependency is pinned in `requirements.txt`.
+**(1+1)-ES, (mu+lambda)-ES and (mu,lambda)-ES: 150 runs each, 450 valid, zero
+failures.** Mean final archive-best variance at alpha = 0.50 over 10 runs (10/10
+valid in every row); compare only within the same case:
 
-### Clone and install
+| Case | Assets | (1+1)-ES | (mu+lambda)-ES | (mu,lambda)-ES |
+| --- | ---: | ---: | ---: | ---: |
+| port1_alpha050 | 31 | 1.524e-03 | 1.166e-03 | 1.166e-03 |
+| port2_alpha050 | 85 | 3.714e-04 | 2.626e-04 | 2.678e-04 |
+| port3_alpha050 | 89 | 4.692e-04 | 3.542e-04 | 3.492e-04 |
+| port4_alpha050 | 98 | 7.247e-04 | 4.112e-04 | 4.305e-04 |
+| port5_alpha050 | 225 | 7.266e-04 | 3.961e-04 | 3.773e-04 |
 
-From the terminal:
+![port5_alpha050: mean archive-best variance against objective evaluations for the three ES variants](portfolio_optimization/results/figures/port5_alpha050_convergence.png)
+
+- (mu+lambda)-ES reached a lower final variance than (1+1)-ES in all **150 of
+  150** paired case-seed comparisons. Plus and comma are close: comma was lower
+  in 84 of 150 pairs, within the run-to-run variation.
+- The 1/5th rule shrinks the (1+1)-ES step size to its 1e-8 bound, leaving broad
+  portfolios (on average 19.5 of 31 assets held on port1, 111 of 225 on port5)
+  where the population variants find sparse ones (about 4 and 9-10 assets).
+- Comma selection worsened the current population best in 29,038 of 64,200
+  generations; plus selection never did. The archive best never worsens.
+
+All 15 cases with best, mean, standard deviation, valid-run rate and runtime, and
+the remaining observations, are in
+[Problem 2, section 4](portfolio_optimization/README.md#4-results-and-evaluation).
+Conclusions are limited to relative performance among the three tested variants;
+these historical input statistics do not establish future investment performance.
+
+### 2.5 Reproduce Problem 2
+
+After [installation](#installation-and-project-structure), from the repository root:
+
+```bash
+python -m unittest discover -s portfolio_optimization/tests   # 149 tests
+
+# One test case (written to portfolio_optimization/results/scratch/)
+python -m portfolio_optimization.portfolio pilot --dataset port1 --alpha 0.50 --variant mu_plus_lambda --seed 0 --budget 30000
+
+# Validate the saved records and rebuild the summary table and convergence plot
+python -m portfolio_optimization.portfolio summarize --runs portfolio_optimization/results/raw/portfolio_runs.jsonl
+
+# Independently validate the 450 saved records and the summary table
+python -m portfolio_optimization.portfolio.validate_results
+
+# Reproduce comparative analysis from the saved 450 runs
+python -m portfolio_optimization.analysis --runs portfolio_optimization/results/raw/portfolio_runs.jsonl --out portfolio_optimization/results/scratch/analysis_review
+
+# Test the comparative-analysis implementation
+python -m unittest discover -s portfolio_optimization/analysis/tests -q
+
+# All 450 runs: 15 cases x 3 variants x seeds 0-9
+python -m portfolio_optimization.portfolio full --confirm-450
+```
+
+Validation includes **149 passing tests** (24 November 2026) and independent
+validation of all 450 records; see the
+[test documentation](portfolio_optimization/tests/README.md). `pilot` defaults to
+a budget of 300, so `--budget 30000` reproduces a recorded run; variants are
+`one_plus_one`, `mu_plus_lambda` and `mu_comma_lambda`. `full` never overwrites
+existing records and continues an interrupted run with `--resume`.
+
+---
+
+## Installation and project structure
+
+Use Python **3.11 or newer** with the pinned NumPy and Matplotlib versions in
+[requirements.txt](requirements.txt). The BA algorithms, runner and data check use
+the standard library; Matplotlib is needed for figures and the complete test
+suites, and NumPy for Problem 2. Until these changes are merged into `main`, check
+out the branch that contains them.
 
 ```bash
 git clone https://github.com/e-KOP/acit4610-final-group-project.git
 cd acit4610-final-group-project
-
 python -m venv .venv
+source .venv/bin/activate            # Windows PowerShell: .venv\Scripts\Activate.ps1
 python -m pip install -r requirements.txt
-```
 
-Activate the virtual environment before installing dependencies when using one.
-
-On Windows PowerShell:
-
-```powershell
-.venv\Scripts\Activate.ps1
-```
-
-On Linux or macOS:
-
-```bash
-source .venv/bin/activate
-```
-
-The completed Problem 1 experiment and validation implementation must be checked out from a branch containing those changes until they are merged into `main`.
-
-### Verify the benchmark datasets
-
-Run:
-
-```bash
+# Check the eleven original benchmark files against their SHA-256 checksums
 python scripts/verify_data.py
 ```
 
-This verifies the eleven original benchmark files against their committed SHA-256 checksums.
-
-It does not execute any optimization algorithm.
-
-### Run all automated tests
-
-From the repository root:
-
-```bash
-python -m unittest discover -s bees_optimization/tests -v
-```
-
-The complete Problem 1 test suite contains 50 automated tests.
-
-All 50 passed on 22 November 2026.
-
-### Reproduce a single TSP experiment
-
-```bash
-python -m bees_optimization.bees.experiments tsp --instances berlin52 --neighborhoods segment_reversal --seeds 1
-```
-
-This reproduces the recorded berlin52 segment-reversal experiment using seed 1.
-
-Expected final tour length:
-
 ```text
-7833
+.
+├── README.md
+├── requirements.txt
+├── bees_optimization/        # Problem 1: Bees Algorithm
+│   ├── bees/                 # BA solver, experiments, output, validation
+│   ├── configs/              # TSP and continuous experiment settings
+│   ├── data/tsplib/          # Six original TSP benchmark datasets
+│   ├── tests/                # 50 algorithm and experiment tests
+│   └── results/              # raw/ (200 records), tables/, figures/ (5)
+├── portfolio_optimization/   # Problem 2: Evolution Strategies
+│   ├── portfolio/            # Solvers, runner, independent validation, CLI
+│   ├── analysis/             # Read-only comparisons and diagnostic figures
+│   ├── configs/              # Portfolio experiment settings
+│   ├── data/or_library/      # Five original portfolio datasets
+│   ├── tests/                # 149 data, operator, solver, pipeline and result tests
+│   └── results/              # raw/, tables/, required figure, supplemental analysis/
+├── scripts/verify_data.py    # Original dataset integrity verification
+├── docs/                     # Requirements checklist, development log, AI-use record
+└── report/                   # Group-authored submission report
 ```
 
-The corresponding gap to the published optimum is approximately 3.86%.
+### Remaining work and AI use
 
-Subset experiments are written to `bees_optimization/results/scratch/`, preserving the committed full experiment results.
+- Confirm the BA parameter-selection pilot evidence (Setting B).
+- Review the combined implementation and documentation as a group.
+- Write and check the combined 3,000-7,500-word report and complete the Inspera
+  submission by 30 November 2026 at 12:00.
 
-### Reproduce a continuous experiment
+The report must be written by the group in accordance with the course's AI-use
+restrictions; AI-produced code must be marked and its use disclosed. The
+[AI-use record](docs/ai_usage.md) documents assistance during development,
+[docs/development.md](docs/development.md) tracks implementation progress and
+the [submission checklist](docs/requirements.md) summarises the assignment
+requirements.
 
-```bash
-python -m bees_optimization.bees.experiments continuous --functions sphere --dimensions 10 --seeds 0
-```
-
-This runs one Sphere experiment at dimension 10 using the configured BA parameters.
-
-### Regenerate tables and figures
-
-```bash
-python -m bees_optimization.bees.output
-```
-
-This reads the committed raw experiment records and regenerates the summary tables and figures without rerunning the optimization algorithms.
-
-The generated files are written to the existing results directories.
-
-### Rerun the entire Problem 1 study
-
-```bash
-python -m bees_optimization.bees.experiments all
-```
-
-This executes all 200 required Problem 1 experiments.
-
-**Warning:** The full experiment command writes directly to `results/raw/` and can overwrite the existing committed raw records and metadata.
-
-Use a separate working copy when reproducing the complete study independently.
-
-## 6. Independent validation
-
-The project includes an independent experiment validation module:
-
-`bees_optimization/bees/validate_results.py`
-
-Run it from the repository root:
-
-```bash
-python -m bees_optimization.bees.validate_results
-```
-
-The validator independently checks:
-
-- All 120 TSP and 80 continuous records are present.
-- Each configuration includes exactly ten unique seeds.
-- Every run uses the configured 30,000 objective evaluations.
-- Recorded BA parameters match the experimental configurations.
-- Every saved TSP tour is a valid permutation starting at city 1.
-- TSP tour lengths match independently calculated EUC_2D distances.
-- Continuous solutions satisfy dimension and bound requirements.
-- Continuous objective values match independent calculations.
-- Initial and final objectives agree with the saved histories.
-- Best-so-far histories contain correctly ordered evaluations and never worsen.
-- Summary tables match the underlying raw records.
-- Sample standard deviations and mean values are correctly calculated.
-- Stored experiment configurations and TSPLIB checksums match their sources.
-
-All 200 committed experimental records passed independent validation on 22 November 2026.
-
-### Automated test coverage
-
-| Test file | Coverage |
-| --- | --- |
-| `test_algorithm.py` | Core TSP Bees Algorithm behavior |
-| `test_tsp_data.py` | TSPLIB parsing, distances, neighborhoods, and TSP regression results |
-| `test_search.py` | Shared search behavior, recruitment, retention, and evaluation budgets |
-| `test_continuous.py` | Benchmark functions, dimensions, bounds, and continuous search |
-| `test_results.py` | Independent result calculations, corrupted-record detection, and full experiment validation |
-| `test_experiment_pipeline.py` | Configuration handling, history compression, small experimental batches, convergence alignment, and output regeneration |
-
-The original implementation contained 28 automated tests.
-
-An additional 22 tests were implemented to verify the experimental results and processing pipeline, bringing the total to **50 tests**.
-
-The additional tests deliberately introduce invalid records to verify that incorrect tours, objective values, histories, settings, and experiment coverage are rejected.
-
-Experiment-pipeline regression tests also regenerate all required statistical tables and figures in temporary directories without modifying the committed experimental results.
-
-### Validation limitations
-
-Validation confirms internal consistency, correct numerical calculations, and reproducibility of the saved outputs.
-
-It does not independently establish that the selected BA parameters are optimal or that the optimization algorithms converge to the global optimum.
-
-The preliminary parameter-selection evidence remains subject to final group review.
-
-## 7. Remaining project work
-
-Problem 1 implementation, experiments, output generation, and automated validation are completed.
-
-Remaining work includes:
-
-- Confirm the BA parameter-selection pilot evidence.
-- Complete the portfolio data loader, objective evaluation, and constraint repair.
-- Implement all three required Evolution Strategies.
-- Validate portfolio feasibility, numerical calculations, and evaluation budgets.
-- Execute the 450 required portfolio experiments.
-- Generate portfolio statistical summaries and convergence plots.
-- Review the combined project implementation and documentation.
-- Complete the group-authored submission report and final submission.
-
-The implementation progress is tracked in [docs/development.md](docs/development.md).
-
-The [submission checklist](docs/requirements.md) summarizes the assignment requirements.
-
-The combined 3,000-7,500-word report must be written by the group in accordance with the course's AI-use restrictions. AI-produced code must be appropriately marked, and assistance must be disclosed.
-
-The [AI-use record](docs/ai_usage.md) documents assistance during development.
-
-## 8. Related repositories
-
-Previous ACIT4610 assignments:
+### Related repositories
 
 - [Assignment 1: Job Shop Scheduling Problem](https://github.com/e-KOP/acit4610-assignment-1-jssp)
 - [Assignment 2: Capacitated Facility Location Problem](https://github.com/e-KOP/acit4610-assignment-2-cflp)
