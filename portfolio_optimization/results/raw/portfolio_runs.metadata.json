@@ -1,0 +1,75 @@
+{
+  "created_utc": "2026-11-24T13:58:07.200111+00:00",
+  "fingerprint_sha256": "b91ee26700475702c2bc5c03937cd9ff55ae9c0715e6e873512baa4c11f98378",
+  "identity": {
+    "config_sha256": "a86db74f03b345c28be2299bf88b84333d9d63c60b9db9727702d2454d3ea459",
+    "dataset_sha256": {
+      "port1": "15615853de5990a70d913c71b91fd90aa45856832c94a6f00e79907fddb5b1d2",
+      "port2": "6cad94fd24c8561772fd975621e40a6b06bd613dc3e4e145d595b143e9f9742d",
+      "port3": "e91527a0befeb789491e627478a703e98f8ce9a79fa9557742d30078c0930838",
+      "port4": "063ae8837619a81f0a1c3ab79a8c86a1596c6da8715206d123871b39ff95cea4",
+      "port5": "96dababdb62bdf1428b487a21c0ab5a7eaa1bcf8065c0dfdaf3eff2476b8070a"
+    },
+    "environment": {
+      "matplotlib": "3.11.2",
+      "numpy": "2.2.6",
+      "platform": "Windows-11-10.0.26200-SP0",
+      "processor": "Intel64 Family 6 Model 158 Stepping 10, GenuineIntel",
+      "python": "3.13.15",
+      "python_implementation": "CPython"
+    },
+    "git_revision": "9baafff7ec618be0427585ea283cd3a0cb56f0f8",
+    "git_source_dirty": false,
+    "manifest_sha256": "e3b52b347a2fdb7c983e76e3cae58afb14780ab44e763405f06d9cbea14d6d66",
+    "schema_version": 1,
+    "selection": {
+      "alphas": [
+        0.25,
+        0.5,
+        0.75
+      ],
+      "budget": 30000,
+      "datasets": [
+        "port1",
+        "port2",
+        "port3",
+        "port4",
+        "port5"
+      ],
+      "seeds": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "variants": [
+        "one_plus_one",
+        "mu_plus_lambda",
+        "mu_comma_lambda"
+      ]
+    },
+    "solver_mode": "actual_es",
+    "source_sha256": {
+      "portfolio_optimization/portfolio/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "portfolio_optimization/portfolio/__main__.py": "00bfe760fac7f49f6c85d387349fdd440367c758cf3e1677e3a858086509b227",
+      "portfolio_optimization/portfolio/data.py": "542c951fec34d9fe5dd279835eda718e08adea3ac8afaeef23c71379b816e26a",
+      "portfolio_optimization/portfolio/evaluation.py": "1f7e3e5bd0df017e2ba8a792eb3889905fccec2222c65ef647d26b2149f77814",
+      "portfolio_optimization/portfolio/experiments.py": "d6723a6da1caee699071cac2d0fb60a322ca10d16d088c01687cf03693be518a",
+      "portfolio_optimization/portfolio/feasibility.py": "720d129ba44e747b8c556064df2984ad752cb1f31faad0fee73686ad90a45a4e",
+      "portfolio_optimization/portfolio/one_plus_one.py": "31864228bb7d1f64989a5e007a620256e0154409d1f6fbe0c50052d148446b2c",
+      "portfolio_optimization/portfolio/output.py": "72633f6c683f23d96b92c216ce6cffb395f67c3fea032f1664310e5511f82c6f",
+      "portfolio_optimization/portfolio/population_es.py": "4d3239276b31c6164e8b4467e02c825f7883d6122f29eba5b56a0cda596fd609",
+      "portfolio_optimization/portfolio/provenance.py": "dded0f4d55c7188079041c045aabe76aae63acd7b3b976a5e3e8b8f33b6c3246",
+      "portfolio_optimization/portfolio/repair.py": "e320eb1737f74bb486d57e8030e26db9d22729dcee2c963675439bffa4661156",
+      "requirements.txt": "ce7c82aef2f30068690218329ceee8bdd74bc4a24fb9785a018fd13b0d2ea179"
+    }
+  },
+  "invocation": "C:\\Users\\abdis\\acit4610-final-group-project\\portfolio_optimization\\portfolio\\__main__.py full --confirm-450",
+  "schema_version": 1
+}
