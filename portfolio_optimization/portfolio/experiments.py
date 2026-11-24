@@ -9,7 +9,9 @@ experiment pipeline to be tested before the algorithms are merged.
 
 import json
 import math
+import os
 import time
+from datetime import datetime, timezone
 from pathlib import Path
 
 from .data import load_portfolio
@@ -19,6 +21,10 @@ from .evaluation import (
     minimum_return_target,
 )
 from .feasibility import is_feasible
+from .provenance import (
+    build_metadata, metadata_path_for, verify_metadata,
+    write_metadata_exclusive,
+)
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -355,6 +361,63 @@ def run_case(
     return record
 
 
+def _load_recoverable_jsonl(path):
+    """Parse saved JSONL, identifying only an interrupted final partial line.
+
+    Parsing never changes the file. The caller validates all complete records
+    before applying any proposed truncation or appended newline.
+    """
+    raw = Path(path).read_bytes()
+    records = []
+    offset = 0
+    truncated_at = None
+    newline_missing = bool(raw) and not raw.endswith(b"\n")
+    lines = raw.splitlines(keepends=True)
+
+    for number, line in enumerate(lines, 1):
+        if not line.strip():
+            raise ValueError(f"Blank JSONL line at {number}")
+        try:
+            record = json.loads(line.decode("utf-8"))
+        except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+            # A terminated malformed record or earlier malformed record
+            # cannot safely be attributed to an interrupted write.
+            if number != len(lines) or line.endswith(b"\n"):
+                raise ValueError(f"Corrupted JSONL record at line {number}") from exc
+            truncated_at = offset
+            break
+        if not isinstance(record, dict):
+            raise ValueError(f"JSONL line {number} is not an object")
+        records.append(record)
+        offset += len(line)
+
+    return records, raw, truncated_at, newline_missing
+
+
+def _apply_safe_recovery(path, raw, truncated_at, newline_missing):
+    """Save the original bytes before truncating an interrupted final line."""
+    path = Path(path)
+    if truncated_at is not None:
+        stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S%fZ")
+        backup = path.with_name(path.name + ".interrupted-" + stamp + ".bak")
+        with backup.open("xb") as stream:
+            stream.write(raw)
+            stream.flush()
+            os.fsync(stream.fileno())
+        with path.open("r+b") as stream:
+            stream.truncate(truncated_at)
+            stream.flush()
+            os.fsync(stream.fileno())
+        print(f"Recovered incomplete final JSONL line; original saved at {backup}")
+    elif newline_missing:
+        # The final record is complete JSON, but an interrupted newline write
+        # would otherwise cause the next record to be concatenated with it.
+        with path.open("ab") as stream:
+            stream.write(b"\n")
+            stream.flush()
+            os.fsync(stream.fileno())
+
+
 def run_selected(
     output_path,
     *,
@@ -366,46 +429,24 @@ def run_selected(
     solver=None,
     resume=False,
 ):
-    """Run selected experiments and save JSONL records incrementally.
+    """Run selected experiments, recording provenance and saving JSONL.
 
-    Defaults to all 450 runs. Use explicit selections for small tests.
-
-    Existing outputs are never overwritten.
-    resume=True skips previously recorded combinations.
+    The sidecar is created before the first run. On resume the *entire*
+    experimental identity must match, and all existing complete records are
+    independently revalidated before anything is appended. A single torn
+    final JSONL line is backed up and removed after validation succeeds.
     """
-
     config = load_config()
+    entries = {item["name"]: item for item in config["datasets"]}
 
-    entries = {
-        item["name"]: item
-        for item in config["datasets"]
-    }
+    datasets = tuple(entries) if datasets is None else tuple(datasets)
+    alphas = tuple(config["alphas"]) if alphas is None else tuple(alphas)
+    variants = tuple(config["variants"]) if variants is None else tuple(variants)
+    seeds = tuple(config["seeds"]) if seeds is None else tuple(seeds)
+    budget = config["evaluation_budget"] if budget is None else budget
 
-    datasets = (
-        tuple(entries)
-        if datasets is None
-        else tuple(datasets)
-    )
-    alphas = (
-        tuple(config["alphas"])
-        if alphas is None
-        else tuple(alphas)
-    )
-    variants = (
-        tuple(config["variants"])
-        if variants is None
-        else tuple(variants)
-    )
-    seeds = (
-        tuple(config["seeds"])
-        if seeds is None
-        else tuple(seeds)
-    )
-    budget = (
-        config["evaluation_budget"]
-        if budget is None
-        else budget
-    )
+    if type(budget) is not int or budget < 1:
+        raise ValueError("Evaluation budget must be a positive integer")
 
     for selected, allowed, label in (
         (datasets, entries, "dataset"),
@@ -418,109 +459,108 @@ def run_selected(
             or len(selected) != len(set(selected))
             or not set(selected) <= set(allowed)
         ):
-            raise ValueError(
-                f"Invalid or duplicate {label} selection"
-            )
+            raise ValueError(f"Invalid or duplicate {label} selection")
 
     output_path = Path(output_path)
-    output_path.parent.mkdir(
-        parents=True, exist_ok=True
+    sidecar = metadata_path_for(output_path)
+
+    selection = {
+        "datasets": datasets,
+        "alphas": alphas,
+        "variants": variants,
+        "seeds": seeds,
+        "budget": budget,
+    }
+    metadata = build_metadata(
+        ROOT, CONFIG_PATH, config, selection,
+        solver_mode="actual_es" if solver is None else "injected_solver",
     )
 
-    completed = set()
-
-    if output_path.exists():
-        if not resume:
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    if not resume:
+        if output_path.exists() or sidecar.exists():
             raise FileExistsError(
-                f"Refusing to overwrite {output_path}"
+                f"Refusing to overwrite existing output or metadata: {output_path}"
             )
-
-        for line in output_path.read_text(
-            encoding="utf-8"
-        ).splitlines():
-            if not line.strip():
-                continue
-
-            record = json.loads(line)
-            key = (
-                record["dataset"],
-                record["alpha"],
-                record["variant"],
-                record["seed"],
+        write_metadata_exclusive(sidecar, metadata)
+        completed = set()
+    else:
+        if sidecar.exists():
+            verify_metadata(sidecar, metadata)
+        elif output_path.exists():
+            raise ValueError(
+                "Refusing unsafe resume: an existing JSONL file has no metadata sidecar"
             )
+        else:
+            write_metadata_exclusive(sidecar, metadata)
 
-            if key in completed:
-                raise ValueError(
-                    "Existing output has duplicate "
-                    "experiment records"
-                )
+        completed = set()
+        if output_path.exists():
+            records, raw, torn_at, newline_missing = _load_recoverable_jsonl(output_path)
+            if records:
+                # Import here to avoid circular import (output imports ROOT and
+                # load_config from this module). Independently checks weights,
+                # return, variance, history, metadata and duplicate case keys.
+                from .output import validate_records
+                observed = validate_records(records, require_complete=False)
+                selected_keys = {
+                    (name, alpha, variant, seed)
+                    for name in datasets
+                    for alpha in alphas
+                    for variant in variants
+                    for seed in seeds
+                }
+                if not set(observed) <= selected_keys:
+                    raise ValueError("Existing JSONL contains cases outside the selected matrix")
 
-            if (
-                record["budget"] != budget
-                or record["evaluations"] != budget
-                or not record["valid"]
-            ):
-                raise ValueError(
-                    "Existing output contains "
-                    "an incompatible run"
-                )
+                for key, record in observed.items():
+                    if (
+                        record.get("budget") != budget
+                        or record.get("evaluations") != budget
+                        or record.get("valid") is not True
+                    ):
+                        raise ValueError("Existing output contains an incompatible run")
+                    expected_settings = dict(
+                        config["one_plus_one"]
+                        if record["variant"] == "one_plus_one"
+                        else config["population"]
+                    )
+                    expected_settings["initial_step_size"] = config["initial_step_size"]
+                    expected_settings["step_size_bounds"] = config["step_size_bounds"]
+                    if record.get("settings") != expected_settings:
+                        raise ValueError("Existing run has incompatible algorithm settings")
+                    if "population_best" in record:
+                        _validated_population_best(
+                            record["population_best"], budget, record["variant"]
+                        )
+                    completed.add(key)
 
-            completed.add(key)
+            # No file mutation occurs until every complete record has passed.
+            _apply_safe_recovery(output_path, raw, torn_at, newline_missing)
 
     written = 0
-
-    mode = "a" if resume else "x"
-
-    with output_path.open(
-        mode, encoding="utf-8"
-    ) as output:
-
+    with output_path.open("a" if resume else "x", encoding="utf-8", newline="\n") as output:
         for name in datasets:
-            data = load_portfolio(
-                ROOT / entries[name]["path"]
-            )
-
+            data = load_portfolio(ROOT / entries[name]["path"])
             if data.n_assets != entries[name]["assets"]:
-                raise ValueError(
-                    f"Unexpected asset count in {name}"
-                )
-
+                raise ValueError(f"Unexpected asset count in {name}")
             for alpha in alphas:
                 for variant in variants:
                     for seed in seeds:
-                        key = (
-                            name, alpha, variant, seed
-                        )
-
+                        key = (name, alpha, variant, seed)
                         if key in completed:
                             continue
-
                         record = run_case(
-                            data,
-                            alpha,
-                            variant,
-                            seed,
-                            budget,
-                            solver=solver,
-                            config=config,
+                            data, alpha, variant, seed, budget,
+                            solver=solver, config=config,
                         )
-
-                        output.write(
-                            json.dumps(
-                                record, allow_nan=False
-                            ) + "\n"
-                        )
+                        output.write(json.dumps(record, allow_nan=False) + "\n")
                         output.flush()
-
+                        os.fsync(output.fileno())
                         written += 1
-
                         print(
-                            f"[{written}] {record['case']} "
-                            f"{variant} seed={seed}: "
-                            f"variance="
-                            f"{record['best_variance']:.8g} "
-                            f"time="
-                            f"{record['runtime_s']:.2f}s"
+                            f"[{written}] {record['case']} {variant} seed={seed}: "
+                            f"variance={record['best_variance']:.8g} "
+                            f"time={record['runtime_s']:.2f}s"
                         )
-
     return written
