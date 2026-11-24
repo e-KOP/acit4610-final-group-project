@@ -18,7 +18,9 @@ python -m unittest discover -s portfolio_optimization/analysis/tests -v
 ```
 
 Outputs go to `portfolio_optimization/results/analysis/` (or `--out`). The SHA-256
-of the runs file is checked before and after and saved in `analysis_metadata.json`.
+of the runs file is checked before and after, with CRLF normalized to LF
+before hashing for cross-platform consistency. The checksum is recorded
+in `analysis_metadata.json`.
 
 ## Outputs
 

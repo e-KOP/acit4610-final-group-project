@@ -24,6 +24,8 @@ source tree (`git_source_dirty: false` in the metadata).
 - `tables/portfolio_summary.md`: human-readable summary table.
 - `figures/port5_alpha050_convergence.png`: mean archive-best variance against
   evaluations for all three variants.
+- `analysis/`: supplemental comparative tables, diagnostic plots and
+  analysis metadata; see [analysis documentation](../analysis/README.md).
 - `scratch/`: disposable pilot and partial runs; not committed.
 
 Each raw record contains the case, dataset, asset count, alpha, target, variant,
@@ -49,6 +51,9 @@ python -m portfolio_optimization.portfolio summarize --runs portfolio_optimizati
 
 # Independently check the records, summary table and provenance (read-only)
 python -m portfolio_optimization.portfolio.validate_results
+
+# Regenerate supplemental analysis without replacing committed outputs
+python -m portfolio_optimization.analysis --runs portfolio_optimization/results/raw/portfolio_runs.jsonl --out portfolio_optimization/results/scratch/analysis_review
 
 # Rerun the full study (resume-safe; existing files are never overwritten)
 python -m portfolio_optimization.portfolio full --confirm-450

@@ -13,6 +13,7 @@ All modules are implemented. Run everything from the repository root; see the
 | `population_es.py` | (mu+lambda)- and (mu,lambda)-ES: recombination, self-adaptation, mutation, plus/comma survivor selection |
 | `experiments.py` | Required cases, seeds, budgets, independent checks, and run records |
 | `output.py` | Summaries and convergence plot from saved records |
+| `validate_results.py` | Read-only independent validation of all 450 runs, constraints, histories, summary tables and provenance |
 | `__main__.py` | `pilot`, `full`, and `summarize` commands |
 
 ## Solver interface

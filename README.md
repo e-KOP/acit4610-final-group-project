@@ -314,6 +314,12 @@ python -m portfolio_optimization.portfolio summarize --runs portfolio_optimizati
 # Independently validate the 450 saved records and the summary table
 python -m portfolio_optimization.portfolio.validate_results
 
+# Reproduce comparative analysis from the saved 450 runs
+python -m portfolio_optimization.analysis --runs portfolio_optimization/results/raw/portfolio_runs.jsonl --out portfolio_optimization/results/scratch/analysis_review
+
+# Test the comparative-analysis implementation
+python -m unittest discover -s portfolio_optimization/analysis/tests -q
+
 # All 450 runs: 15 cases x 3 variants x seeds 0-9
 python -m portfolio_optimization.portfolio full --confirm-450
 ```
@@ -357,11 +363,12 @@ python scripts/verify_data.py
 │   ├── tests/                # 50 algorithm and experiment tests
 │   └── results/              # raw/ (200 records), tables/, figures/ (5)
 ├── portfolio_optimization/   # Problem 2: Evolution Strategies
-│   ├── portfolio/            # Data, repair, feasibility, three ES variants, runner, CLI
+│   ├── portfolio/            # Solvers, runner, independent validation, CLI
+│   ├── analysis/             # Read-only comparisons and diagnostic figures
 │   ├── configs/              # Portfolio experiment settings
 │   ├── data/or_library/      # Five original portfolio datasets
 │   ├── tests/                # 149 data, operator, solver, pipeline and result tests
-│   └── results/              # raw/ (450 records), tables/, figures/ (1)
+│   └── results/              # raw/, tables/, required figure, supplemental analysis/
 ├── scripts/verify_data.py    # Original dataset integrity verification
 ├── docs/                     # Requirements checklist, development log, AI-use record
 └── report/                   # Group-authored submission report

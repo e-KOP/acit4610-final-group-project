@@ -22,8 +22,10 @@ This is an implementation plan, not an experiment log or report draft.
 - [x] Run small pilot cases in separate output folders and inspect failures.
 - [x] Pin dependencies and run all 650 required experiments (200 BA, 450 ES).
 - [x] Generate every required table and figure from saved data.
-- [ ] Update READMEs with tested commands, actual settings, and measured results
-  (updated with the completed results; pending group review).
+- [x] Independently validate all 200 Problem 1 and 450 Problem 2 records.
+- [x] Integrate comparative portfolio analysis and its 16 automated tests.
+- [x] Update READMEs with tested commands, actual settings, and measured results.
+- [ ] Complete group review of the READMEs and confirm BA Setting B pilot evidence.
 - [ ] Have the group write and check its combined report, and complete submission.
 
 Prefer one coherent change at a time, with tests for numerical invariants and

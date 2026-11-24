@@ -351,6 +351,30 @@ result = solve_population(data.returns, data.covariance, target, seed=0,
 print(result["best_variance"], result["best_return"])
 ```
 
+### Comparative analysis (read-only)
+
+The additional [comparative analysis](analysis/README.md) operates on the
+committed 450-run JSONL dataset without modifying the official experiments.
+It provides per-variant statistics, paired-seed comparisons, mean ranks,
+convergence plots for all 15 cases, portfolio sparsity measurements, and
+diagnostics for step-size adaptation and stagnation.
+
+The generated tables and figures are available in
+[results/analysis/](results/analysis/). The optional step-size diagnostics
+re-execute the unchanged (1+1)-ES on selected cases and are kept separate
+from the official 450-run dataset.
+
+To reproduce the comparison without overwriting committed analysis outputs:
+
+```bash
+python -m portfolio_optimization.analysis --runs portfolio_optimization/results/raw/portfolio_runs.jsonl --out portfolio_optimization/results/scratch/analysis_review
+
+python -m unittest discover -s portfolio_optimization/analysis/tests -q
+```
+
+The analysis suite contains 16 tests, separate from the 149 portfolio
+implementation and validation tests.
+
 ### Verification
 
 **Independent result validation.** `portfolio/validate_results.py` checks the
