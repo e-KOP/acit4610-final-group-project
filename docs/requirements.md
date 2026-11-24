@@ -28,10 +28,10 @@ collaborators, send weekly updates, or submit anything to Inspera.
 
 ## Problem 1 (pages 3-7)
 
-- [ ] Implement BA for both TSP neighborhoods and continuous functions.
+- [x] Implement BA for both TSP neighborhoods and continuous functions.
 - [ ] Meet the [design, instance, and parameter requirements](../bees_optimization/README.md).
-- [ ] Complete the [validation checklist](../bees_optimization/tests/README.md).
-- [ ] Complete 120 TSP and 80 continuous runs and every [required output](../bees_optimization/results/README.md).
+- [x] Complete the [validation checklist](../bees_optimization/tests/README.md).
+- [x] Complete 120 TSP and 80 continuous runs and every [required output](../bees_optimization/results/README.md).
 - [ ] Document site selection, elite recruitment, local search, retention, scouting,
   stopping, representations, moves, bounds, and exact settings.
 - [ ] Discuss initial-to-final improvement, convergence, variability, unsuccessful
@@ -40,10 +40,10 @@ collaborators, send weekly updates, or submit anything to Inspera.
 
 ## Problem 2 (pages 8-12)
 
-- [ ] Implement all three ES variants with common repair and validation.
+- [x] Implement all three ES variants with common repair and validation.
 - [ ] Meet the [design, target, and parameter requirements](../portfolio_optimization/README.md).
 - [ ] Complete the [validation checklist](../portfolio_optimization/tests/README.md).
-- [ ] Complete 450 runs and every [required output](../portfolio_optimization/results/README.md).
+- [x] Complete 450 runs and every [required output](../portfolio_optimization/results/README.md).
 - [ ] Explain selection, adaptation, size effects, repair, stagnation, failures,
   and the difference between the comma population best and archive best.
 - [ ] Limit performance conclusions to the tested variants and historical inputs.

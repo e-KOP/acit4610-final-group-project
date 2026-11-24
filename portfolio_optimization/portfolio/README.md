@@ -60,5 +60,6 @@ repair. **Plus** keeps the best 10 of parents and offspring, **comma** the best 
 of the offspring only. With 30,000 evaluations: 10 initial + 428 generations x 70
 + a final partial batch of 30.
 
-Known limitations and implementation choices are listed in the
-[Problem 2 README](../README.md#6-verification-and-known-limitations).
+Implementation choices are listed in the
+[Problem 2 README](../README.md#2-algorithm-design); observed behaviour of the
+450 runs is in [section 4](../README.md#4-results-and-evaluation).
