@@ -22,7 +22,9 @@ DEFAULT_OUT = ROOT / "portfolio_optimization" / "results" / "analysis"
 
 
 def sha256(path):
-    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+    """SHA-256 with Windows line endings normalised, so the value is the same
+    on every platform and matches the file as stored in the repository."""
+    return hashlib.sha256(Path(path).read_bytes().replace(b"\r\n", b"\n")).hexdigest()
 
 
 def analyse(runs_path, out_dir, allow_partial=False, focus=("port5", 0.50)):
