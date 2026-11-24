@@ -1,7 +1,9 @@
 # Problem 2: Portfolio Optimization via Evolution Strategies
 
-**Status: specification, data, and folder structure only.** All three required
-ES variants are pending implementation; no portfolio experiments have been run.
+**Status: all three ES variants implemented and tested; the 450 required runs
+are pending.** Data loading, evaluation, repair, feasibility checks, the
+experiment runner, outputs and the command-line interface are implemented. The
+solvers are verified on all 15 cases (see [section 6](#6-verification-and-known-limitations)).
 
 ## 1. How the search will work
 
@@ -93,8 +95,95 @@ performance.
 
 ## 5. Reproduce the project
 
-From the repository root, run `python scripts/verify_data.py` to check the bundled
-files. See the [root setup instructions](../README.md#5-reproduce-the-repository-setup),
-[data sources](data/README.md), [module plan](portfolio/README.md), and
-[validation checklist](tests/README.md). Single-run, batch, and plotting commands
-will be added when implemented.
+## 5. Reproduce the project
+
+Run every command from the **repository root** (Python 3.11+ for the figures).
+
+```bash
+python -m pip install -r requirements.txt
+python scripts/verify_data.py                                  # check the five data files
+python -m unittest discover -s portfolio_optimization/tests    # all portfolio tests
+
+# One test case (written to portfolio_optimization/results/scratch/)
+python -m portfolio_optimization.portfolio pilot --dataset port1 --alpha 0.50 --variant mu_plus_lambda --seed 0 --budget 30000
+
+# The full required set: 15 cases x 3 variants x seeds 0-9 = 450 runs
+python -m portfolio_optimization.portfolio full --confirm-450
+
+# Validate saved records and build the summary table and convergence plot
+python -m portfolio_optimization.portfolio summarize --runs portfolio_optimization/results/raw/portfolio_runs.jsonl
+```
+
+`--resume` continues an interrupted pilot or full run without repeating finished
+runs; existing result files are never overwritten. See
+`python -m portfolio_optimization.portfolio --help` for all options.
+
+The solvers can also be called directly from Python:
+
+```python
+from portfolio_optimization.portfolio.data import load_portfolio
+from portfolio_optimization.portfolio.evaluation import minimum_return_target
+from portfolio_optimization.portfolio.one_plus_one import solve_one_plus_one
+from portfolio_optimization.portfolio.population_es import solve_population
+
+data = load_portfolio("portfolio_optimization/data/or_library/port1.txt")
+target = minimum_return_target(data.returns, 0.50)
+result = solve_one_plus_one(data.returns, data.covariance, target, seed=0)
+result = solve_population(data.returns, data.covariance, target, seed=0,
+                          selection="plus")      # or "comma"
+print(result["best_variance"], result["best_return"])
+```
+
+See also the [data sources](data/README.md), [module overview](portfolio/README.md),
+[output plan](results/README.md) and [validation checklist](tests/README.md).
+
+## 6. Verification and known limitations
+
+`tests/test_solver_integration.py` runs all **5 datasets x 3 alpha values x 3
+variants** (seed 0, 1,000 evaluations) and checks every result independently with
+the shared `evaluation` and `feasibility` functions: feasible weights, the return
+constraint (including all alpha = 0.75 cases), exact budgets, recomputed variance
+and return, archive histories equal to the running minimum of every evaluated
+candidate, generation checkpoints, plus/comma survivor selection, reproducibility,
+and acceptance by the experiment runner. `test_one_plus_one.py` and
+`test_population_es.py` test the operators in isolation, including hand-calculated
+recombination and self-adaptation with fixed random draws.
+
+**Implementation choices where the specification leaves room**
+
+| Topic | Choice |
+| --- | --- |
+| Parent choice for recombination | Two **different** parents, uniformly at random (without replacement) |
+| What is stored after repair | The repaired weights (they are recombined and mutated later); step sizes are stored as adapted, they are not repaired |
+| Ties in survivor selection | Stable sort: on equal variance, parents are kept before offspring, earlier offspring before later |
+| Ties in (1+1)-ES | A child with **equal** variance is rejected (strictly lower required) and counts as a failure for the 1/5th rule |
+| Budget smaller than 10 | Population initialization stops at the budget and the best evaluated parent is returned |
+| Final partial batch | Evaluated and archived; no survivor selection follows, because the budget is used up |
+| Variance in the search loop | Computed with NumPy (`w @ Sigma @ w`); repair and feasibility use the shared pure-Python functions. The runner recomputes the reported variance with `evaluation.portfolio_variance` |
+| Random numbers | `numpy.random.default_rng(seed)`. With the same seed, plus and comma make identical draws until the first survivor selection (evaluations 1-80), so both start from the same population |
+| Extra output | Population variants also return `population_best`: the best variance in the parent population at each generation (evaluations 10, 80, 150, ... 29,970). It shows that comma selection can lose its best parent while the archive cannot worsen |
+
+**Observed limitations** (single pilot runs, seed 0; to be confirmed by the full
+experiment)
+
+- **(1+1)-ES step-size collapse.** The simplex projection pulls many mutated
+  children back, so only about 16-20% of trials succeed, at or below the 1/5
+  target, and the rule keeps shrinking the step size. It reaches the lower bound
+  of 1e-8 after about 5,000 trials on port1 and 21,000-26,000 trials on port5;
+  afterwards improvements are microscopic. The (1+1)-ES then keeps almost every
+  asset in the portfolio (30 of 31 on port1, about 205 of 225 on port5), whereas
+  the population variants find sparse portfolios (3-9 assets) with clearly lower
+  variance.
+- **Return target not always active.** For port5 at alpha = 0.25 the target is
+  negative (-0.000137), and the lowest-variance portfolios found exceed it. For
+  port1 the best portfolios sit exactly on the target, so the return repair
+  shapes the search there.
+- **Comma selection discards good parents.** In one port5 run the comma
+  population's best variance got worse in 193 of 428 generations; the archive is
+  unaffected.
+- **Cross-platform reproducibility.** Runs are identical for the same seed on the
+  same machine. NumPy's matrix products can differ in the last bits between
+  platforms, which could change a trajectory; pilot results matched to every
+  printed digit between the Windows and Linux machines used during development.
+- **Runtime.** About 1-2 s per port1 run and 5-10 s per port5 run on a laptop;
+  the pure-Python repair, not the variance, dominates the cost per evaluation.
