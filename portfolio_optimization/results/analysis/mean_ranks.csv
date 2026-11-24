@@ -1,0 +1,4 @@
+variant,mean_rank,ranked_runs
+one_plus_one,3.0,150
+mu_plus_lambda,1.56,150
+mu_comma_lambda,1.44,150
