@@ -142,6 +142,64 @@ def _validated_history(history, budget, best_variance):
     return compressed
 
 
+
+def _validated_population_best(points, budget, variant):
+    """Validate generation-level population-best history.
+
+    This differs from the best-so-far archive:
+    comma-selection population best is allowed to worsen.
+    """
+    if variant not in ("mu_plus_lambda", "mu_comma_lambda"):
+        raise ValueError("Unexpected population history for ES variant")
+
+    if not isinstance(points, (list, tuple)) or not points:
+        raise ValueError("Missing population-best history")
+
+    first = min(10, budget)
+    expected_evaluation = first
+    previous_value = math.inf
+    validated = []
+
+    for point in points:
+        if not isinstance(point, (list, tuple)) or len(point) != 2:
+            raise ValueError("Invalid population history point")
+
+        evaluation, value = point
+
+        if (
+            type(evaluation) is not int
+            or evaluation != expected_evaluation
+            or evaluation > budget
+        ):
+            raise ValueError("Invalid population generation checkpoint")
+
+        try:
+            value = float(value)
+        except (TypeError, ValueError, OverflowError) as exc:
+            raise ValueError("Invalid population variance") from exc
+
+        if not math.isfinite(value):
+            raise ValueError("Non-finite population variance")
+
+        if (
+            variant == "mu_plus_lambda"
+            and value > previous_value
+            and not _close(value, previous_value)
+        ):
+            raise ValueError("Plus-selection population best worsened")
+
+        validated.append([evaluation, value])
+        previous_value = value
+        expected_evaluation += 70
+
+    last_expected = first + 70 * ((budget - first) // 70)
+
+    if validated[-1][0] != last_expected:
+        raise ValueError("Incomplete population generation history")
+
+    return validated
+
+
 def run_case(
     data,
     alpha,
@@ -268,7 +326,7 @@ def run_case(
     settings["initial_step_size"] = config["initial_step_size"]
     settings["step_size_bounds"] = config["step_size_bounds"]
 
-    return {
+    record = {
         "case": f"{data.name}_alpha{round(alpha * 100):03d}",
         "dataset": data.name,
         "assets": data.n_assets,
@@ -286,6 +344,15 @@ def run_case(
         "runtime_s": elapsed,
         "history": history,
     }
+
+    if "population_best" in result:
+        record["population_best"] = _validated_population_best(
+            result["population_best"],
+            budget,
+            variant,
+        )
+
+    return record
 
 
 def run_selected(
