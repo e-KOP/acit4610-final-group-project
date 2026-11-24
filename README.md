@@ -303,7 +303,7 @@ these historical input statistics do not establish future investment performance
 After [installation](#installation-and-project-structure), from the repository root:
 
 ```bash
-python -m unittest discover -s portfolio_optimization/tests   # 124 tests
+python -m unittest discover -s portfolio_optimization/tests   # 149 tests
 
 # One test case (written to portfolio_optimization/results/scratch/)
 python -m portfolio_optimization.portfolio pilot --dataset port1 --alpha 0.50 --variant mu_plus_lambda --seed 0 --budget 30000
@@ -311,11 +311,15 @@ python -m portfolio_optimization.portfolio pilot --dataset port1 --alpha 0.50 --
 # Validate the saved records and rebuild the summary table and convergence plot
 python -m portfolio_optimization.portfolio summarize --runs portfolio_optimization/results/raw/portfolio_runs.jsonl
 
+# Independently validate the 450 saved records and the summary table
+python -m portfolio_optimization.portfolio.validate_results
+
 # All 450 runs: 15 cases x 3 variants x seeds 0-9
 python -m portfolio_optimization.portfolio full --confirm-450
 ```
 
-The test suite contains **124 tests**; see the
+Validation includes **149 passing tests** (24 November 2026) and independent
+validation of all 450 records; see the
 [test documentation](portfolio_optimization/tests/README.md). `pilot` defaults to
 a budget of 300, so `--budget 30000` reproduces a recorded run; variants are
 `one_plus_one`, `mu_plus_lambda` and `mu_comma_lambda`. `full` never overwrites
@@ -356,7 +360,7 @@ python scripts/verify_data.py
 │   ├── portfolio/            # Data, repair, feasibility, three ES variants, runner, CLI
 │   ├── configs/              # Portfolio experiment settings
 │   ├── data/or_library/      # Five original portfolio datasets
-│   ├── tests/                # 124 data, operator, solver and pipeline tests
+│   ├── tests/                # 149 data, operator, solver, pipeline and result tests
 │   └── results/              # raw/ (450 records), tables/, figures/ (1)
 ├── scripts/verify_data.py    # Original dataset integrity verification
 ├── docs/                     # Requirements checklist, development log, AI-use record
