@@ -299,11 +299,15 @@ python -m portfolio_optimization.portfolio pilot --dataset port1 --alpha 0.50 --
 # Validate saved records and rebuild the summary table and convergence plot
 python -m portfolio_optimization.portfolio summarize --runs portfolio_optimization/results/raw/portfolio_runs.jsonl
 
+# Independently validate the 450 saved records and the summary table
+python -m portfolio_optimization.portfolio.validate_results
+
 # The full required set: 15 cases x 3 variants x seeds 0-9 = 450 runs
 python -m portfolio_optimization.portfolio full --confirm-450
 ```
 
-The test suite contains **124 tests** in 11 files; see
+Validation includes **149 passing tests** in 12 files (24 November 2026) and
+independent validation of all 450 records; see
 [test documentation](tests/README.md).
 
 - `pilot` runs one dataset, alpha, variant and seed. The default `--budget` is
@@ -348,6 +352,36 @@ print(result["best_variance"], result["best_return"])
 ```
 
 ### Verification
+
+**Independent result validation.** `portfolio/validate_results.py` checks the
+saved records without importing the project's data, evaluation, repair,
+feasibility, runner or output modules, and without running an optimizer or
+writing any file. It parses the five OR-Library files itself and checks:
+
+- complete dataset, alpha, variant and seed coverage, with no duplicate or
+  out-of-matrix records;
+- asset counts, recomputed `R_min(alpha)`, recorded ES settings, and exactly
+  30,000 evaluations per run;
+- weights (`w_i >= -1e-8`, `abs(sum(w) - 1) <= 1e-8`) and the return target
+  (`r^T w >= R_min - 1e-8`);
+- return and variance recomputed as exactly rounded sums (`math.fsum`) against
+  the saved values;
+- archive histories that start at evaluation 1, end at the budget, never worsen
+  and end at the saved best variance;
+- population histories at every generation: plus selection equals the archive
+  best, comma selection is never better than it;
+- the 45-row summary table and the port5_alpha050 convergence data, recomputed
+  from the records;
+- the provenance sidecar: actual ES solvers, the full configured matrix and
+  unchanged configuration and data files.
+
+On the committed records it reports **450 of 450 records valid**, a largest
+relative difference of 2.9e-16 between saved and recomputed values (summation
+order only), and the population best of (mu,lambda)-ES worsening in 29,038 of
+64,200 generations against 0 for (mu+lambda)-ES. The saved archive history omits
+changes smaller than a relative 1e-8, so values read from it are compared at that
+tolerance. `--allow-partial` validates a pilot or incomplete file and never
+reports it as the final experiment.
 
 `tests/test_solver_integration.py` runs all **5 datasets x 3 alpha values x 3
 variants** (seed 0, 1,000 evaluations) and checks every result independently with

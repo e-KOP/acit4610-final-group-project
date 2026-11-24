@@ -6,7 +6,7 @@ Run from the repository root:
 python -m unittest discover -s portfolio_optimization/tests
 ```
 
-The suite contains **124 tests** in 11 files.
+The suite contains **149 tests** in 12 files; all passed on 24 November 2026.
 
 | File | Tests | Coverage |
 | --- | ---: | --- |
@@ -20,6 +20,7 @@ The suite contains **124 tests** in 11 files.
 | `test_experiments.py` | 19 | All three variants; rejection of wrong budgets, variances, returns, infeasible weights and bad histories; saved records and resume; provenance sidecar; recovery from torn or tampered records |
 | `test_output.py` | 8 | Partial and complete summaries, duplicates, wrong objectives, failed runs excluded from variance statistics, port5 plot, invalid JSON |
 | `test_provenance.py` | 8 | Exact-byte SHA-256, identity of inputs and environment, changed code or data blocks resume, manifest disagreement, overwrite refusal |
+| `test_results.py` | 25 | Independent result validator: OR-Library parser and port1 checkpoints, hand-calculated example, coverage, duplicates, constraints, recomputed values, histories, population histories, summary table, provenance, partial sets, read-only behaviour, and the committed 450 runs |
 | `test_cli.py` | 8 | `pilot`, `full` and `summarize` dispatch, `--confirm-450` requirement, invalid budget, missing solver |
 
 The checks cover: initialization and rejected candidates counting toward the

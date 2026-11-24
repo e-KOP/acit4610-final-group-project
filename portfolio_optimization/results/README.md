@@ -47,6 +47,9 @@ Run from the repository root.
 # Validate the saved records and rebuild the table and figure
 python -m portfolio_optimization.portfolio summarize --runs portfolio_optimization/results/raw/portfolio_runs.jsonl
 
+# Independently check the records, summary table and provenance (read-only)
+python -m portfolio_optimization.portfolio.validate_results
+
 # Rerun the full study (resume-safe; existing files are never overwritten)
 python -m portfolio_optimization.portfolio full --confirm-450
 ```
