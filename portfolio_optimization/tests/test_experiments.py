@@ -1,4 +1,3 @@
-
 """Tests for the portfolio experiment runner.
 
 AI-assisted implementation. See docs/ai_usage.md.
@@ -236,6 +235,59 @@ class TestPortfolioExperiments(unittest.TestCase):
                     datasets=("not_a_dataset",),
                     solver=fake_solver,
                 )
+
+    def test_preserves_comma_population_history(self):
+        """Comma ES may have worsening population-best values."""
+
+        def solver(*args):
+            result = fake_solver(*args)
+            value = result["best_variance"]
+            result["population_best"] = [
+                [10, value],
+                [80, value * 1.1],
+            ]
+            return result
+
+        record = run_case(
+            self.data,
+            0.5,
+            "mu_comma_lambda",
+            0,
+            budget=100,
+            solver=solver,
+        )
+
+        self.assertIn("population_best", record)
+        self.assertEqual(len(record["population_best"]), 2)
+        self.assertGreater(
+            record["population_best"][1][1],
+            record["population_best"][0][1],
+        )
+
+    def test_rejects_worsening_plus_population(self):
+        """Plus ES must not have worsening population-best values."""
+
+        def solver(*args):
+            result = fake_solver(*args)
+            value = result["best_variance"]
+            result["population_best"] = [
+                [10, value],
+                [80, value * 1.1],
+            ]
+            return result
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "population best worsened",
+        ):
+            run_case(
+                self.data,
+                0.5,
+                "mu_plus_lambda",
+                0,
+                budget=100,
+                solver=solver,
+            )
 
 
 if __name__ == "__main__":
