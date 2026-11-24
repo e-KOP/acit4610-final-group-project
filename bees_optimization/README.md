@@ -130,11 +130,15 @@ The original TSPLIB files are bundled in `data/tsplib`; see
 
 The experiment runner loads Setting B from the JSON configuration files and
 passes it explicitly to the solver; the original Python function defaults
-(`30/10/3/10/5`) were **not** used in the committed 200 experiments. Setting B
-was chosen after preliminary experiments comparing three configurations
-(30/10/3/10/5, 10/3/1/10/5 and 6/2/1/5/3) on pilot seeds **100-104**, kept separate
-from the reported seeds 0-9. **The parameter selection remains provisional until
-the group confirms the pilot evidence.**
+(`30/10/3/10/5`) were **not** used in the committed 200 experiments. The group
+compared Settings A (30/10/3/10/5), B (10/3/1/10/5) and C (6/2/1/5/3) on
+pilot seeds **100–104**, distinct from official seeds 0–9. Setting A was worse
+on TSP; B and C performed similarly, with C achieving the lower six-instance
+TSP mean gap but B winning the three smallest reversal instances. B also had
+the lowest mean continuous error in six of eight function/dimension cases.
+The group fixed **B** for both parts as a practical compromise, **not** as an
+assertion of global or statistical superiority. See the [pilot evidence and
+reproduction instructions](pilot/README.md).
 
 - [TSP configuration](configs/tsp.json): 6 instances x 2 neighbourhoods x 10 seeds = **120 runs**.
 - [Continuous configuration](configs/continuous.json): 4 functions x 2 dimensions x 10 seeds = **80 runs**.

@@ -15,7 +15,7 @@ This is an implementation plan, not an experiment log or report draft.
 - [x] Implement the portfolio loader, objectives, and independent validation tests.
 - [x] Implement and validate all four continuous functions and continuous BA.
 - [x] Connect the BA JSON configuration to the runner.
-- [ ] Confirm BA experiment settings (Setting B remains provisional).
+- [x] Confirm the Setting B pilot observations and document the parameter trade-offs.
 - [x] Implement and test common portfolio repair and all three ES variants.
 - [x] Add a reusable single-run CLI with runtime and file exports.
 - [x] Add batch commands, raw records, histories, and reproducibility metadata.
@@ -25,7 +25,7 @@ This is an implementation plan, not an experiment log or report draft.
 - [x] Independently validate all 200 Problem 1 and 450 Problem 2 records.
 - [x] Integrate comparative portfolio analysis and its 16 automated tests.
 - [x] Update READMEs with tested commands, actual settings, and measured results.
-- [ ] Complete group review of the READMEs and confirm BA Setting B pilot evidence.
+- [ ] Complete group review of the READMEs, including the reproduced BA pilot evidence.
 - [ ] Have the group write and check its combined report, and complete submission.
 
 Prefer one coherent change at a time, with tests for numerical invariants and

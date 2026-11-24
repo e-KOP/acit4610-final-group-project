@@ -107,11 +107,15 @@ function definitions and the distance and neighbourhood examples.
 Part A: 6 instances x 2 neighbourhoods x seeds 0-9 = **120 runs**. Part B: 4
 functions x 2 dimensions x seeds 0-9 = **80 runs**. Both parts use the same
 Setting B, loaded from [tsp.json](bees_optimization/configs/tsp.json) and
-[continuous.json](bees_optimization/configs/continuous.json). It was selected
-through pilot comparisons on seeds 100-104, separate from the reported seeds,
-against Setting A (30/10/3/10/5) and Setting C (6/2/1/5/3). **The selection
-remains provisional until the group confirms the pilot evidence.** The six
-TSPLIB files are bundled unchanged apart from gzip decompression; see
+[continuous.json](bees_optimization/configs/continuous.json), was fixed after a
+five-seed comparison of Settings A, B and C, kept separate from official
+seeds 0–9. Setting A was markedly worse; B and C were comparable on TSP
+(segment-reversal mean gaps 17.6% and 16.3%, respectively), while B achieved
+the lowest mean error in six of eight continuous cases. Thus B was selected as
+a common setting for both parts, **not** as a universally best setting. The
+[pilot protocol, recorded summary and reproduction script](bees_optimization/pilot/README.md)
+provide the evidence and limitations. The six TSPLIB files are bundled
+unchanged apart from gzip decompression; see
 [TSPLIB sources](bees_optimization/data/README.md).
 
 ### 1.4 Results and evaluation
@@ -376,7 +380,7 @@ python scripts/verify_data.py
 
 ### Remaining work and AI use
 
-- Confirm the BA parameter-selection pilot evidence (Setting B).
+- Review the documented BA pilot evidence and parameter-selection trade-offs as a group.
 - Review the combined implementation and documentation as a group.
 - Write and check the combined 3,000-7,500-word report and complete the Inspera
   submission by 30 November 2026 at 12:00.
