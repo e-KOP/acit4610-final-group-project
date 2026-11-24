@@ -28,3 +28,6 @@ This is a factual development record for the ACIT4610 Final Group Project 2026 (
 - The reported 650 experiment records, summaries and figures were produced by executing project code and were checked against saved numerical outputs. AI assistance with the code does **not** mean an AI tool fabricated those experimental measurements.
 - The group must still assess what fraction of the final code is AI-generated (as opposed to AI-assisted), and disclose an **approximate percentage** in the submitted report. This record does not invent such a percentage. Review statuses marked pending should not be treated as completed group review.
 - Under the assignment rules, AI may assist coding but **must not write the submitted report**. Report wording, interpretations, claims and the final AI disclosure must be written and approved by the group.
+
+## AI usage percentage
+- Our estimate is that roughly 80% of the final Python code was generated or initially drafted using AI tools. AI generated implementations were not accepted without human involvement, as group members made decisions about algorithm implementation, parameter settings and experiment configurations. We also manually inspected, debugged and integrated the code, and we resolved the implementation and cross-platform testing issues.
