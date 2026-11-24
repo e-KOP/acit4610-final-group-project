@@ -1,0 +1,15 @@
+{
+  "created_utc": "2026-11-24T15:47:26+00:00",
+  "runs_file": "C:\\Users\\Jakob\\Documents\\OsloMet master\\ACIT4610 - Evolutionary AI\\Final Project\\acit4610-final-group-project\\portfolio_optimization\\results\\raw\\portfolio_runs.jsonl",
+  "runs_sha256": "7c571d7754b8a6c58d5a1af8cb71e9ead4066bdbac6c0efe0320bd795c9bc3a7",
+  "status": {
+    "runs": 450,
+    "expected": 450,
+    "valid": 450,
+    "complete": true,
+    "budgets": [
+      30000
+    ]
+  },
+  "label": "FINAL: all 450 runs"
+}

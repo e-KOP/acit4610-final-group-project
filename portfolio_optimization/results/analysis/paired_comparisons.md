@@ -1,0 +1,51 @@
+# Paired per-seed comparisons (ratio = variance a / variance b)
+
+_FINAL: all 450 runs_
+
+| case | dataset | alpha | a | b | paired_seeds | a_wins | b_wins | ties | median_ratio | geo_mean_ratio | sign_test_p | wilcoxon_p |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| port1_alpha025 | port1 | 0.25 | mu_plus_lambda | mu_comma_lambda | 10 | 4 | 6 | 0 | 1 | 1 | 0.7539 | 0.625 |
+| port1_alpha025 | port1 | 0.25 | mu_plus_lambda | one_plus_one | 10 | 10 | 0 | 0 | 0.8924 | 0.8724 | 0.001953 | 0.001953 |
+| port1_alpha025 | port1 | 0.25 | mu_comma_lambda | one_plus_one | 10 | 10 | 0 | 0 | 0.8928 | 0.8725 | 0.001953 | 0.001953 |
+| port1_alpha050 | port1 | 0.5 | mu_plus_lambda | mu_comma_lambda | 10 | 0 | 10 | 0 | 1 | 1 | 0.001953 | 0.001953 |
+| port1_alpha050 | port1 | 0.5 | mu_plus_lambda | one_plus_one | 10 | 10 | 0 | 0 | 0.7935 | 0.7667 | 0.001953 | 0.001953 |
+| port1_alpha050 | port1 | 0.5 | mu_comma_lambda | one_plus_one | 10 | 10 | 0 | 0 | 0.7935 | 0.7667 | 0.001953 | 0.001953 |
+| port1_alpha075 | port1 | 0.75 | mu_plus_lambda | mu_comma_lambda | 10 | 0 | 10 | 0 | 1 | 1 | 0.001953 | 0.001953 |
+| port1_alpha075 | port1 | 0.75 | mu_plus_lambda | one_plus_one | 10 | 10 | 0 | 0 | 0.8604 | 0.854 | 0.001953 | 0.001953 |
+| port1_alpha075 | port1 | 0.75 | mu_comma_lambda | one_plus_one | 10 | 10 | 0 | 0 | 0.8604 | 0.854 | 0.001953 | 0.001953 |
+| port2_alpha025 | port2 | 0.25 | mu_plus_lambda | mu_comma_lambda | 10 | 3 | 7 | 0 | 1.015 | 1.018 | 0.3438 | 0.1602 |
+| port2_alpha025 | port2 | 0.25 | mu_plus_lambda | one_plus_one | 10 | 10 | 0 | 0 | 0.8928 | 0.8878 | 0.001953 | 0.001953 |
+| port2_alpha025 | port2 | 0.25 | mu_comma_lambda | one_plus_one | 10 | 10 | 0 | 0 | 0.8693 | 0.872 | 0.001953 | 0.001953 |
+| port2_alpha050 | port2 | 0.5 | mu_plus_lambda | mu_comma_lambda | 10 | 7 | 3 | 0 | 0.9894 | 0.9811 | 0.3438 | 0.2324 |
+| port2_alpha050 | port2 | 0.5 | mu_plus_lambda | one_plus_one | 10 | 10 | 0 | 0 | 0.6986 | 0.7067 | 0.001953 | 0.001953 |
+| port2_alpha050 | port2 | 0.5 | mu_comma_lambda | one_plus_one | 10 | 10 | 0 | 0 | 0.7106 | 0.7203 | 0.001953 | 0.001953 |
+| port2_alpha075 | port2 | 0.75 | mu_plus_lambda | mu_comma_lambda | 10 | 2 | 8 | 0 | 1.012 | 1.017 | 0.1094 | 0.1602 |
+| port2_alpha075 | port2 | 0.75 | mu_plus_lambda | one_plus_one | 10 | 10 | 0 | 0 | 0.4793 | 0.4834 | 0.001953 | 0.001953 |
+| port2_alpha075 | port2 | 0.75 | mu_comma_lambda | one_plus_one | 10 | 10 | 0 | 0 | 0.4811 | 0.4754 | 0.001953 | 0.001953 |
+| port3_alpha025 | port3 | 0.25 | mu_plus_lambda | mu_comma_lambda | 10 | 3 | 7 | 0 | 1.02 | 1.01 | 0.3438 | 0.1934 |
+| port3_alpha025 | port3 | 0.25 | mu_plus_lambda | one_plus_one | 10 | 10 | 0 | 0 | 0.8477 | 0.8463 | 0.001953 | 0.001953 |
+| port3_alpha025 | port3 | 0.25 | mu_comma_lambda | one_plus_one | 10 | 10 | 0 | 0 | 0.85 | 0.838 | 0.001953 | 0.001953 |
+| port3_alpha050 | port3 | 0.5 | mu_plus_lambda | mu_comma_lambda | 10 | 2 | 8 | 0 | 1.015 | 1.014 | 0.1094 | 0.06445 |
+| port3_alpha050 | port3 | 0.5 | mu_plus_lambda | one_plus_one | 10 | 10 | 0 | 0 | 0.7472 | 0.7552 | 0.001953 | 0.001953 |
+| port3_alpha050 | port3 | 0.5 | mu_comma_lambda | one_plus_one | 10 | 10 | 0 | 0 | 0.7503 | 0.7444 | 0.001953 | 0.001953 |
+| port3_alpha075 | port3 | 0.75 | mu_plus_lambda | mu_comma_lambda | 10 | 7 | 3 | 0 | 0.9933 | 0.9823 | 0.3438 | 0.1309 |
+| port3_alpha075 | port3 | 0.75 | mu_plus_lambda | one_plus_one | 10 | 10 | 0 | 0 | 0.7359 | 0.7242 | 0.001953 | 0.001953 |
+| port3_alpha075 | port3 | 0.75 | mu_comma_lambda | one_plus_one | 10 | 10 | 0 | 0 | 0.7421 | 0.7373 | 0.001953 | 0.001953 |
+| port4_alpha025 | port4 | 0.25 | mu_plus_lambda | mu_comma_lambda | 10 | 9 | 1 | 0 | 0.9649 | 0.9657 | 0.02148 | 0.003906 |
+| port4_alpha025 | port4 | 0.25 | mu_plus_lambda | one_plus_one | 10 | 10 | 0 | 0 | 0.7569 | 0.7677 | 0.001953 | 0.001953 |
+| port4_alpha025 | port4 | 0.25 | mu_comma_lambda | one_plus_one | 10 | 10 | 0 | 0 | 0.7981 | 0.7949 | 0.001953 | 0.001953 |
+| port4_alpha050 | port4 | 0.5 | mu_plus_lambda | mu_comma_lambda | 10 | 7 | 3 | 0 | 0.9545 | 0.9554 | 0.3438 | 0.1055 |
+| port4_alpha050 | port4 | 0.5 | mu_plus_lambda | one_plus_one | 10 | 10 | 0 | 0 | 0.5559 | 0.5693 | 0.001953 | 0.001953 |
+| port4_alpha050 | port4 | 0.5 | mu_comma_lambda | one_plus_one | 10 | 10 | 0 | 0 | 0.5881 | 0.5959 | 0.001953 | 0.001953 |
+| port4_alpha075 | port4 | 0.75 | mu_plus_lambda | mu_comma_lambda | 10 | 8 | 2 | 0 | 0.9799 | 0.9768 | 0.1094 | 0.1934 |
+| port4_alpha075 | port4 | 0.75 | mu_plus_lambda | one_plus_one | 10 | 10 | 0 | 0 | 0.5097 | 0.505 | 0.001953 | 0.001953 |
+| port4_alpha075 | port4 | 0.75 | mu_comma_lambda | one_plus_one | 10 | 10 | 0 | 0 | 0.5114 | 0.517 | 0.001953 | 0.001953 |
+| port5_alpha025 | port5 | 0.25 | mu_plus_lambda | mu_comma_lambda | 10 | 5 | 5 | 0 | 1.016 | 1.048 | 1 | 0.2324 |
+| port5_alpha025 | port5 | 0.25 | mu_plus_lambda | one_plus_one | 10 | 10 | 0 | 0 | 0.6329 | 0.6225 | 0.001953 | 0.001953 |
+| port5_alpha025 | port5 | 0.25 | mu_comma_lambda | one_plus_one | 10 | 10 | 0 | 0 | 0.5908 | 0.5939 | 0.001953 | 0.001953 |
+| port5_alpha050 | port5 | 0.5 | mu_plus_lambda | mu_comma_lambda | 10 | 3 | 7 | 0 | 1.06 | 1.048 | 0.3438 | 0.1602 |
+| port5_alpha050 | port5 | 0.5 | mu_plus_lambda | one_plus_one | 10 | 10 | 0 | 0 | 0.5336 | 0.544 | 0.001953 | 0.001953 |
+| port5_alpha050 | port5 | 0.5 | mu_comma_lambda | one_plus_one | 10 | 10 | 0 | 0 | 0.5043 | 0.5189 | 0.001953 | 0.001953 |
+| port5_alpha075 | port5 | 0.75 | mu_plus_lambda | mu_comma_lambda | 10 | 6 | 4 | 0 | 0.9881 | 0.9849 | 0.7539 | 0.6953 |
+| port5_alpha075 | port5 | 0.75 | mu_plus_lambda | one_plus_one | 10 | 10 | 0 | 0 | 0.4848 | 0.4893 | 0.001953 | 0.001953 |
+| port5_alpha075 | port5 | 0.75 | mu_comma_lambda | one_plus_one | 10 | 10 | 0 | 0 | 0.4708 | 0.4968 | 0.001953 | 0.001953 |
