@@ -167,7 +167,9 @@ class TestEndToEnd(unittest.TestCase):
         for path in figures:
             self.assertTrue(Path(path).stat().st_size > 0)
         meta = json.loads((self.out / "analysis_metadata.json").read_text())
-        self.assertEqual(meta["runs_sha256"], before)
+        normalized = self.runs.read_bytes().replace(b"\r\n", b"\n")
+        expected = hashlib.sha256(normalized).hexdigest()
+        self.assertEqual(meta["runs_sha256"], expected)
 
     def test_duplicate_runs_are_rejected(self):
         line = self.runs.read_text().splitlines()[0]
