@@ -23,7 +23,7 @@ This is an implementation plan, not an experiment log or report draft.
 - [x] Pin dependencies and run all 650 required experiments (200 BA, 450 ES).
 - [x] Generate every required table and figure from saved data.
 - [ ] Update READMEs with tested commands, actual settings, and measured results
-  (restructured to the Assignment 2 layout; pending group review).
+  (updated with the completed results; pending group review).
 - [ ] Have the group write and check its combined report, and complete submission.
 
 Prefer one coherent change at a time, with tests for numerical invariants and

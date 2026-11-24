@@ -159,7 +159,7 @@ execution recorded in the metadata and may differ on another machine.
 - **Initial best:** best of the 10 initial scouts, to show the improvement.
 - **Efficiency:** mean runtime of the search call.
 
-### TSP results
+### Part A: TSP results
 
 | Instance | Neighbourhood | Best | Mean | SD | Mean gap (%) | Mean initial best | Mean runtime (s) |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -191,7 +191,7 @@ including the return edge:
 
 ![Best recorded berlin52 route](results/figures/berlin52_best_route.png)
 
-### Continuous optimization results
+### Part B: Continuous optimization results
 
 | Function | D | Best | Mean | SD | Mean initial best | Mean runtime (s) |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
