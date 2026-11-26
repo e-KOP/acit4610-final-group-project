@@ -1,6 +1,6 @@
 # Problem 2: Portfolio Optimization via Evolution Strategies
 
-Three Evolution Strategies, **(1+1)-ES**, **(mu+lambda)-ES** and **(mu,lambda)-ES**,
+Three Evolution Strategies, **(1+1)-ES**, **(μ+λ)-ES** and **(μ,λ)-ES**,
 search for long-only investment weights that minimise **portfolio variance**
 while using the whole budget and meeting a minimum expected return. Group number:
 **Group-8**. See the [root README](../README.md) for group members and Problem 1.
@@ -46,7 +46,7 @@ Start with one repaired parent and a scalar step size sigma
 One success in five trials leaves sigma unchanged:
 `exp(1/3) * exp(-1/12)^4 = 1`.
 
-### (mu+lambda)-ES and (mu,lambda)-ES
+### (μ+λ)-ES and (μ,λ)-ES
 
 ```text
 Start with mu = 10 repaired parents, each with step-size vector 0.1/sqrt(n)
@@ -55,16 +55,15 @@ Start with mu = 10 repaired parents, each with step-size vector 0.1/sqrt(n)
          average their weights; take the geometric mean of their step sizes
          adapt step sizes: sigma' = sigma * exp(tau_prime * Z0 + tau * Zi)
          mutate weights with fresh normal draws, repair, evaluate
-    -> plus:  keep the best 10 of parents + offspring
-       comma: keep the best 10 of the offspring only
+    -> (μ+λ)-ES: keep the best 10 of parents + offspring
+       (μ,λ)-ES: keep the best 10 of the offspring only
     -> repeat: 10 initial + 428 generations x 70 + a final partial batch of 30
     -> return the archive best
 ```
 
-Plus selection is **elitist**: the population best never worsens. Comma selection
-discards every parent after one generation, so the population best can worsen;
-the separate archive cannot. In comma selection the archive is used for
-reporting only and never enters parent selection.
+(μ+λ)-ES is **elitist** because the population best never worsens. (μ,λ)-ES
+discards every parent after one generation, so the population best can worsen.
+The archive keeps the best feasible allocation found so far for reporting.
 
 ## 2. Algorithm design
 
@@ -152,8 +151,8 @@ This is a worked repair example, not a benchmark result.
 | Budget smaller than 10 | Population initialization stops at the budget and the best evaluated parent is returned |
 | Final partial batch | Evaluated and archived; no survivor selection follows, because the budget is used up |
 | Variance in the search loop | Computed with NumPy (`w @ Sigma @ w`); repair and feasibility use the shared pure-Python functions. The runner recomputes the reported variance with `evaluation.portfolio_variance` |
-| Random numbers | `numpy.random.default_rng(seed)`. With the same seed, plus and comma make identical draws until the first survivor selection (evaluations 1-80), so both start from the same population |
-| Extra output | Population variants also return `population_best`: the best variance in the parent population at each generation (evaluations 10, 80, 150, ... 29,970). It shows that comma selection can lose its best parent while the archive cannot worsen |
+| Random numbers | `numpy.random.default_rng(seed)`. With the same seed, (μ+λ)-ES and (μ,λ)-ES make identical draws until the first survivor selection (evaluations 1-80), so both start from the same population |
+| Extra output | Population variants also return `population_best`: the best variance in the parent population at each generation (evaluations 10, 80, 150, ... 29,970). It shows that (μ,λ)-ES can lose its best parent while the archive cannot worsen |
 
 ## 3. Instances and experiment parameters
 
@@ -185,8 +184,8 @@ checkpoints:
 | Variant | Population | Offspring | Step-size rule | Survivors | Evaluation budget |
 | --- | ---: | ---: | --- | --- | ---: |
 | (1+1)-ES | 1 | 1 per trial | 1/5th success rule, scalar | Strict improvement | 30,000 |
-| (mu+lambda)-ES | 10 | 70 per generation | Self-adaptive vector | Parents + offspring | 30,000 |
-| (mu,lambda)-ES | 10 | 70 per generation | Self-adaptive vector | Offspring only | 30,000 |
+| (μ+λ)-ES | 10 | 70 per generation | Self-adaptive vector | Parents + offspring | 30,000 |
+| (μ,λ)-ES | 10 | 70 per generation | Self-adaptive vector | Offspring only | 30,000 |
 
 [configs/experiments.json](configs/experiments.json) contains the executable
 settings. All variants use seeds **0-9**, giving **3 variants x 5 datasets x 3
@@ -204,7 +203,7 @@ dataset checksums. The committed results were produced from a clean source tree
 
 ## 4. Results and evaluation
 
-**(1+1)-ES: 150 runs; (mu+lambda)-ES: 150 runs; (mu,lambda)-ES: 150 runs;
+**(1+1)-ES: 150 runs; (μ+λ)-ES: 150 runs; (μ,λ)-ES: 150 runs;
 450 valid, zero failures.** Each row summarises 10 independent runs with 30,000
 evaluations each. Runtime values describe the local execution recorded in the
 metadata and may differ on another machine.
@@ -217,7 +216,7 @@ metadata and may differ on another machine.
 
 Mean final variance over 10 runs (valid runs: 10/10 in every row):
 
-| Case | Assets | R_min | (1+1)-ES | (mu+lambda)-ES | (mu,lambda)-ES |
+| Case | Assets | R_min | (1+1)-ES | (μ+λ)-ES | (μ,λ)-ES |
 | --- | ---: | ---: | ---: | ---: | ---: |
 | port1_alpha025 | 31 | 0.005344 | 8.825e-04 | 7.691e-04 | 7.691e-04 |
 | port1_alpha050 | 31 | 0.007185 | 1.524e-03 | 1.166e-03 | 1.166e-03 |
@@ -248,26 +247,26 @@ batch.
 
 **Observations from the 450 committed runs:**
 
-- **Population ES versus (1+1)-ES.** (mu+lambda)-ES reached a lower final
+- **Population ES versus (1+1)-ES.** (μ+λ)-ES reached a lower final
   variance than (1+1)-ES in all **150 of 150** paired case-seed comparisons.
-- **Plus versus comma.** The two are almost identical on port1. Over all cases,
-  comma was lower in 84 of 150 pairs; the differences are of the same order as the
-  run-to-run variation, so no general ranking follows from these runs.
+- **(μ+λ)-ES and (μ,λ)-ES.** (μ,λ)-ES had lower final variance in 84 of 150
+  pairs. Of those, 13 pairs, all on port1, differed by less than one part in
+  a million. The differences are of the same order as run-to-run variation.
 - **(1+1)-ES step-size collapse.** In pilot runs only about 16-20% of trials
   succeeded, so the 1/5th rule kept shrinking sigma to its 1e-8 bound
   (after about 5,000 trials on port1 and 21,000-26,000 on port5). The final
   (1+1)-ES portfolios are broad: counting weights above 1e-6, they hold on average
   19.5 of 31 assets on port1 and 111 of 225 on port5, whereas the population
   variants hold about 4 and 9-10 assets respectively.
-- **Comma selection discards good parents.** Across the 150 (mu,lambda)-ES runs
+- **(μ,λ)-ES can discard its best parent.** Across the 150 (μ,λ)-ES runs
   the current population best worsened in 29,038 of 64,200 generations; for
-  (mu+lambda)-ES it never worsened. The archive best never worsens in either.
+  (μ+λ)-ES it never worsened. The archive best never worsens in either.
 - **Return target activity.** On port1 the best allocation sits on the target
   (`R(w) = R_min` within 1e-9) in 89 of 90 runs, so return repair shapes the
   search. For port5 at alpha = 0.25 the target is negative (-0.000137) and only
   1 of 30 final allocations lies on it.
 - **Problem size.** On port5 the population-variant curves are still decreasing
-  at 30,000 evaluations (mean (mu+lambda)-ES variance 3.987e-04 at 29,000 and
+  at 30,000 evaluations (mean (μ+λ)-ES variance 3.987e-04 at 29,000 and
   3.961e-04 at 30,000), while (1+1)-ES has flattened. The run-to-run spread is
   far larger than on port1, where the population variants' standard deviation is
   at most 2.2e-07.
@@ -392,8 +391,9 @@ writing any file. It parses the five OR-Library files itself and checks:
   the saved values;
 - archive histories that start at evaluation 1, end at the budget, never worsen
   and end at the saved best variance;
-- population histories at every generation: plus selection equals the archive
-  best, comma selection is never better than it;
+- population histories at every generation: the population best equals
+  the archive best for (μ+λ)-ES. For (μ,λ)-ES the population best is at or
+  above the archive-best variance;
 - the 45-row summary table and the port5_alpha050 convergence data, recomputed
   from the records;
 - the provenance sidecar: actual ES solvers, the full configured matrix and
@@ -401,8 +401,8 @@ writing any file. It parses the five OR-Library files itself and checks:
 
 On the committed records it reports **450 of 450 records valid**, a largest
 relative difference of 2.9e-16 between saved and recomputed values (summation
-order only), and the population best of (mu,lambda)-ES worsening in 29,038 of
-64,200 generations against 0 for (mu+lambda)-ES. The saved archive history omits
+order only), and the population best of (μ,λ)-ES worsening in 29,038 of
+64,200 generations against 0 for (μ+λ)-ES. The saved archive history omits
 changes smaller than a relative 1e-8, so values read from it are compared at that
 tolerance. `--allow-partial` validates a pilot or incomplete file and never
 reports it as the final experiment.
@@ -412,7 +412,7 @@ variants** (seed 0, 1,000 evaluations) and checks every result independently wit
 the shared `evaluation` and `feasibility` functions: feasible weights, the return
 constraint (including all alpha = 0.75 cases), exact budgets, recomputed variance
 and return, archive histories equal to the running minimum of every evaluated
-candidate, generation checkpoints, plus/comma survivor selection, reproducibility,
+candidate, generation checkpoints, survivor selection for both population variants, reproducibility,
 and acceptance by the experiment runner. `test_one_plus_one.py` and
 `test_population_es.py` test the operators in isolation, including hand-calculated
 recombination and self-adaptation with fixed random draws.

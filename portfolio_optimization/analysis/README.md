@@ -32,7 +32,7 @@ in `analysis_metadata.json`.
 | `convergence_all_cases.png` | Mean archive-best variance vs evaluations for all 15 cases (the required plot covers only port5_alpha050) |
 | `relative_excess_boxplots.png` | Final variance as % above the best run of any variant, per case, so cases with different scales can be compared |
 | `sparsity.png` | Assets held in the final allocation, per dataset, alpha and variant |
-| `population_vs_archive_port5.png` | One seed of port5_alpha050: archive best vs current population best for plus and comma |
+| `population_vs_archive_port5.png` | One seed of port5_alpha050: archive best vs current population best for (μ+λ)-ES and (μ,λ)-ES |
 | `step_size/` | Optional (1+1)-ES step-size diagnostic: per-seed CSV and plot (see below) |
 
 ## Definitions and cautions

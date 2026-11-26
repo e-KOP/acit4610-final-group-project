@@ -4,6 +4,6 @@ _FINAL: all 450 runs_
 
 | variant | mean_rank | ranked_runs |
 | --- | --- | --- |
-| one_plus_one | 3 | 150 |
-| mu_plus_lambda | 1.56 | 150 |
-| mu_comma_lambda | 1.44 | 150 |
+| (1+1)-ES | 3 | 150 |
+| (μ+λ)-ES | 1.56 | 150 |
+| (μ,λ)-ES | 1.44 | 150 |

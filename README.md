@@ -3,8 +3,8 @@
 This repository contains the two problems of the ACIT4610 final group project.
 **Problem 1** applies the **Bees Algorithm (BA)** to the Travelling Salesman
 Problem (Part A) and to four continuous benchmark functions (Part B). **Problem 2**
-applies three **Evolution Strategies (ES)**, (1+1)-ES, (mu+lambda)-ES and
-(mu,lambda)-ES, to minimise portfolio variance under long-only, budget and
+applies three **Evolution Strategies (ES)**, (1+1)-ES, (μ+λ)-ES and
+(μ,λ)-ES, to minimise portfolio variance under long-only, budget and
 minimum-return constraints. Group number: **Group-8**. Group members: **Zhongye
 Xue, Syed Mohammad Abdur-Rahman Tirmizey, Jakob Andreas Amtedal, Khoa Anh Huynh**.
 
@@ -17,7 +17,7 @@ saved records.
 | Problem | Algorithm | Parts / variants | Runs | Folder |
 | --- | --- | --- | ---: | --- |
 | 1 | Bees Algorithm | Part A: TSP (swap, segment reversal); Part B: continuous functions | 200 | [bees_optimization](bees_optimization/README.md) |
-| 2 | Evolution Strategies | (1+1)-ES, (mu+lambda)-ES, (mu,lambda)-ES | 450 | [portfolio_optimization](portfolio_optimization/README.md) |
+| 2 | Evolution Strategies | (1+1)-ES, (μ+λ)-ES, (μ,λ)-ES | 450 | [portfolio_optimization](portfolio_optimization/README.md) |
 
 Both problems follow the same workflow:
 
@@ -218,17 +218,17 @@ Shared:       z -> repair z into feasible weights w -> evaluate w^T Sigma w
               keep the child only if its variance is strictly lower
               sigma *= exp(1/3) after success, exp(-1/12) otherwise
 
-(mu+lambda)-ES and (mu,lambda)-ES, mu = 10, lambda = 70:
+(μ+λ)-ES and (μ,λ)-ES, mu = 10, lambda = 70:
               two different random parents -> mean weights, geometric-mean step sizes
               -> self-adapt step sizes -> mutate -> repair -> evaluate
-              plus:  best 10 of parents + offspring (elitist)
-              comma: best 10 of offspring only (archive not used for selection)
+              (μ+λ)-ES: best 10 of parents + offspring (elitist)
+              (μ,λ)-ES: best 10 of offspring only (archive not used for selection)
               10 initial + 428 generations x 70 + a final partial batch of 30
 ```
 
 ### 2.2 Algorithm design
 
-| Block | (1+1)-ES | (mu+lambda)-ES | (mu,lambda)-ES |
+| Block | (1+1)-ES | (μ+λ)-ES | (μ,λ)-ES |
 | --- | --- | --- | --- |
 | Population | 1 parent, 1 child per trial | 10 parents, 70 offspring | 10 parents, 70 offspring |
 | Initialization | Uniform [0, 1] weights, repaired | Same for each parent | Same for each parent |
@@ -273,11 +273,11 @@ when any of them has changed.
 
 ### 2.4 Results and evaluation
 
-**(1+1)-ES, (mu+lambda)-ES and (mu,lambda)-ES: 150 runs each, 450 valid, zero
+**(1+1)-ES, (μ+λ)-ES and (μ,λ)-ES: 150 runs each, 450 valid, zero
 failures.** Mean final archive-best variance at alpha = 0.50 over 10 runs (10/10
 valid in every row); compare only within the same case:
 
-| Case | Assets | (1+1)-ES | (mu+lambda)-ES | (mu,lambda)-ES |
+| Case | Assets | (1+1)-ES | (μ+λ)-ES | (μ,λ)-ES |
 | --- | ---: | ---: | ---: | ---: |
 | port1_alpha050 | 31 | 1.524e-03 | 1.166e-03 | 1.166e-03 |
 | port2_alpha050 | 85 | 3.714e-04 | 2.626e-04 | 2.678e-04 |
@@ -287,14 +287,15 @@ valid in every row); compare only within the same case:
 
 ![port5_alpha050: mean archive-best variance against objective evaluations for the three ES variants](portfolio_optimization/results/figures/port5_alpha050_convergence.png)
 
-- (mu+lambda)-ES reached a lower final variance than (1+1)-ES in all **150 of
-  150** paired case-seed comparisons. Plus and comma are close: comma was lower
-  in 84 of 150 pairs, within the run-to-run variation.
+- (μ+λ)-ES reached a lower final variance than (1+1)-ES in all **150 of
+  150** paired case-seed comparisons. (μ,λ)-ES was lower
+  than (μ+λ)-ES in 84 of 150 pairs. In 13 pairs, all on port1, the relative
+  difference was less than one part in a million.
 - The 1/5th rule shrinks the (1+1)-ES step size to its 1e-8 bound, leaving broad
   portfolios (on average 19.5 of 31 assets held on port1, 111 of 225 on port5)
   where the population variants find sparse ones (about 4 and 9-10 assets).
-- Comma selection worsened the current population best in 29,038 of 64,200
-  generations; plus selection never did. The archive best never worsens.
+- The current population best worsened in 29,038 of 64,200 generations for
+  (μ,λ)-ES and in zero generations for (μ+λ)-ES. The archive best never worsens.
 
 All 15 cases with best, mean, standard deviation, valid-run rate and runtime, and
 the remaining observations, are in

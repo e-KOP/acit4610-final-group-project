@@ -19,8 +19,8 @@ from pathlib import Path
 DATASETS = ("port1", "port2", "port3", "port4", "port5")
 ALPHAS = (0.25, 0.50, 0.75)
 VARIANTS = ("one_plus_one", "mu_plus_lambda", "mu_comma_lambda")
-LABELS = {"one_plus_one": "(1+1)-ES", "mu_plus_lambda": "(mu+lambda)-ES",
-          "mu_comma_lambda": "(mu,lambda)-ES"}
+LABELS = {"one_plus_one": "(1+1)-ES", "mu_plus_lambda": "(μ+λ)-ES",
+          "mu_comma_lambda": "(μ,λ)-ES"}
 PAIRS = (("mu_plus_lambda", "mu_comma_lambda"),
          ("mu_plus_lambda", "one_plus_one"),
          ("mu_comma_lambda", "one_plus_one"))
@@ -278,6 +278,8 @@ def _fmt(value):
         return "n/a"
     if isinstance(value, float):
         return f"{value:.4g}"
+    if isinstance(value, str):
+        return LABELS.get(value, value)
     return str(value)
 
 

@@ -15,7 +15,7 @@ The suite contains **149 tests** in 12 files; all passed on 24 November 2026.
 | `test_repair.py` | 11 | Simplex projection (already valid, negative, zero, all-negative weights) and return repair (already feasible, hand-calculated, target at r_max, impossible target, all dataset targets); inputs not modified |
 | `test_feasibility.py` | 10 | Final checks at tolerance 1e-8, independent of the search code: negative weights, budget sum, return target, tolerance, invalid inputs |
 | `test_one_plus_one.py` | 11 | 1/5th rule factors and neutral rate, step-size clamp, known two-asset optimum, exact budget (including budget 1), every evaluation counted, archive never worsens, reproducibility |
-| `test_population_es.py` | 14 | Recombination, self-adaptation and mutation with fixed draws; clamping; plus versus comma selection; exact budget and partial last batch; plus population best never worsens; comma population best can worsen but the archive cannot |
+| `test_population_es.py` | 14 | Recombination, self-adaptation and mutation with fixed draws; clamping; survivor selection and exact budgets with partial last batches. The (μ+λ)-ES population best never worsens. The (μ,λ)-ES population best can worsen while its archive best cannot |
 | `test_solver_integration.py` | 14 | All 5 datasets x 3 alpha values x 3 variants at 1,000 evaluations, checked independently |
 | `test_experiments.py` | 19 | All three variants; rejection of wrong budgets, variances, returns, infeasible weights and bad histories; saved records and resume; provenance sidecar; recovery from torn or tampered records |
 | `test_output.py` | 8 | Partial and complete summaries, duplicates, wrong objectives, failed runs excluded from variance statistics, port5 plot, invalid JSON |

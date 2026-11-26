@@ -11,8 +11,8 @@ source tree (`git_source_dirty: false` in the metadata).
 | Experiment | Configurations | Seeds | Runs |
 | --- | ---: | ---: | ---: |
 | (1+1)-ES | 5 datasets x 3 alpha values | 10 | 150 |
-| (mu+lambda)-ES | 5 datasets x 3 alpha values | 10 | 150 |
-| (mu,lambda)-ES | 5 datasets x 3 alpha values | 10 | 150 |
+| (μ+λ)-ES | 5 datasets x 3 alpha values | 10 | 150 |
+| (μ,λ)-ES | 5 datasets x 3 alpha values | 10 | 150 |
 | Total | 45 | 10 | 450 |
 
 ## Results structure

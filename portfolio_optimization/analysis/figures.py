@@ -82,7 +82,7 @@ def relative_excess_boxplots(groups, path):
                 patch.set_facecolor(COLORS[variant])
                 patch.set_alpha(0.35)
             ax.set_xticks(range(1, len(VARIANTS) + 1),
-                          ["(1+1)", "(mu+lambda)", "(mu,lambda)"], fontsize=8)
+                          [LABELS[variant] for variant in VARIANTS], fontsize=8)
             ax.set_yscale("symlog", linthresh=1)
             ax.set_title(case_name(dataset, alpha), fontsize=10)
             ax.grid(alpha=0.3, axis="y")

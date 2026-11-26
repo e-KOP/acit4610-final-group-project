@@ -10,7 +10,7 @@ All modules are implemented. Run everything from the repository root; see the
 | `repair.py` | Simplex projection and return-target repair |
 | `feasibility.py` | Independent checks of final weight and return constraints |
 | `one_plus_one.py` | (1+1)-ES with scalar 1/5th success-rule adaptation; shared `Archive` and `repair` helpers |
-| `population_es.py` | (mu+lambda)- and (mu,lambda)-ES: recombination, self-adaptation, mutation, plus/comma survivor selection |
+| `population_es.py` | (μ+λ)-ES and (μ,λ)-ES: recombination, self-adaptation, mutation, survivor selection for both population variants |
 | `experiments.py` | Required cases, seeds, budgets, independent checks, and run records |
 | `output.py` | Summaries and convergence plot from saved records |
 | `validate_results.py` | Read-only independent validation of all 450 runs, constraints, histories, summary tables and provenance |
