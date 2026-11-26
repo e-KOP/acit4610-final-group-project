@@ -45,6 +45,13 @@ FIELDS = (
 )
 
 
+VARIANT_LABELS = {
+    "one_plus_one": "(1+1)-ES",
+    "mu_plus_lambda": "(μ+λ)-ES",
+    "mu_comma_lambda": "(μ,λ)-ES",
+}
+
+
 def read_records(path):
     """Read JSONL without modifying the experimental records."""
     records = []
@@ -414,7 +421,9 @@ def write_summary(rows, output_dir):
             output.write(
                 "| "
                 + " | ".join(
-                    fmt(row[field]) for field in FIELDS
+                    VARIANT_LABELS.get(row[field], row[field])
+                    if field == "variant" else fmt(row[field])
+                    for field in FIELDS
                 )
                 + " |\n"
             )
@@ -520,7 +529,7 @@ def plot_convergence(observed, path):
             means,
             where="post",
             label=(
-                f"{variant} "
+                f"{VARIANT_LABELS[variant]} "
                 f"(valid n={len(records)})"
             ),
         )
