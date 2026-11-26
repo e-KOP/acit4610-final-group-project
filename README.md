@@ -324,17 +324,17 @@ python -m portfolio_optimization.analysis --runs portfolio_optimization/results/
 
 # Test the comparative-analysis implementation
 python -m unittest discover -s portfolio_optimization/analysis/tests -q
-
-# All 450 runs: 15 cases x 3 variants x seeds 0-9
-python -m portfolio_optimization.portfolio full --confirm-450
 ```
 
 Validation includes **149 passing tests** (24 November 2026) and independent
 validation of all 450 records; see the
 [test documentation](portfolio_optimization/tests/README.md). `pilot` defaults to
 a budget of 300, so `--budget 30000` reproduces a recorded run; variants are
-`one_plus_one`, `mu_plus_lambda` and `mu_comma_lambda`. `full` never overwrites
-existing records and continues an interrupted run with `--resume`.
+`one_plus_one`, `mu_plus_lambda` and `mu_comma_lambda`.
+
+To rerun all 450 experiments from scratch, follow the
+[full portfolio rerun instructions](portfolio_optimization/README.md#rerun-all-450-experiments).
+They show how to preserve the committed results and validate a fresh run.
 
 ---
 
@@ -343,8 +343,7 @@ existing records and continues an interrupted run with `--resume`.
 Use Python **3.11 or newer** with the pinned NumPy and Matplotlib versions in
 [requirements.txt](requirements.txt). The BA algorithms, runner and data check use
 the standard library; Matplotlib is needed for figures and the complete test
-suites, and NumPy for Problem 2. Until these changes are merged into `main`, check
-out the branch that contains them.
+suites, and NumPy for Problem 2.
 
 ```bash
 git clone https://github.com/e-KOP/acit4610-final-group-project.git

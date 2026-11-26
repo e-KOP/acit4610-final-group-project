@@ -54,12 +54,9 @@ python -m portfolio_optimization.portfolio.validate_results
 
 # Regenerate supplemental analysis without replacing committed outputs
 python -m portfolio_optimization.analysis --runs portfolio_optimization/results/raw/portfolio_runs.jsonl --out portfolio_optimization/results/scratch/analysis_review
-
-# Rerun the full study (resume-safe; existing files are never overwritten)
-python -m portfolio_optimization.portfolio full --confirm-450
 ```
 
 `summarize` rejects incomplete or invalid record sets unless `--allow-partial` is
-given; partial reports are written to `scratch/reports/`. To rerun the full study
-independently, use a separate working copy, because `full` writes to
-`raw/portfolio_runs.jsonl`.
+given; partial reports are written to `scratch/reports/`. Follow the
+[full portfolio rerun instructions](../README.md#rerun-all-450-experiments)
+to run the experiments from scratch in a separate clone.

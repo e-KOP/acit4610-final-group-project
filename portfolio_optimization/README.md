@@ -289,7 +289,7 @@ command from the **repository root**.
 
 ```bash
 python -m pip install -r requirements.txt
-python scripts/verify_data.py                                  # check the five data files
+python scripts/verify_data.py                                  # verify all 11 benchmark files
 python -m unittest discover -s portfolio_optimization/tests    # all portfolio tests
 
 # One test case (written to portfolio_optimization/results/scratch/)
@@ -300,9 +300,6 @@ python -m portfolio_optimization.portfolio summarize --runs portfolio_optimizati
 
 # Independently validate the 450 saved records and the summary table
 python -m portfolio_optimization.portfolio.validate_results
-
-# The full required set: 15 cases x 3 variants x seeds 0-9 = 450 runs
-python -m portfolio_optimization.portfolio full --confirm-450
 ```
 
 Validation includes **149 passing tests** in 12 files (24 November 2026) and
@@ -313,7 +310,7 @@ independent validation of all 450 records; see
   300 for quick checks; use `--budget 30000` to reproduce a recorded run. Output
   is written to `results/scratch/`.
 - `full` runs all 450 experiments and requires `--confirm-450`. It writes to
-  `results/raw/portfolio_runs.jsonl`.
+  `results/raw/portfolio_runs.jsonl`. See the [full rerun steps](#rerun-all-450-experiments).
 - `summarize` validates saved records and writes the summary table and
   convergence plot. `--allow-partial` processes pilot or incomplete records into
   `results/scratch/reports/` instead of the committed results.
@@ -349,6 +346,44 @@ result = solve_population(data.returns, data.covariance, target, seed=0,
                           selection="plus")      # or "comma"
 print(result["best_variance"], result["best_return"])
 ```
+
+### Rerun all 450 experiments
+
+Use a separate clone with the dependencies installed in its Python environment.
+Run the commands from that clone's repository root. The clone includes the
+committed run file and its metadata, and the runner protects both from
+overwriting. Move them together before starting a fresh run.
+
+In Bash:
+
+```bash
+results=portfolio_optimization/results
+mkdir -p "$results/scratch" &&
+mkdir "$results/scratch/committed-run" &&
+mv "$results/raw/portfolio_runs.jsonl" "$results/raw/portfolio_runs.metadata.json" "$results/scratch/committed-run/"
+```
+
+In Windows PowerShell:
+
+```powershell
+$results = "portfolio_optimization/results"
+New-Item -ItemType Directory -Path "$results/scratch" -Force -ErrorAction Stop | Out-Null
+New-Item -ItemType Directory -Path "$results/scratch/committed-run" -ErrorAction Stop
+Move-Item -LiteralPath "$results/raw/portfolio_runs.jsonl","$results/raw/portfolio_runs.metadata.json" -Destination "$results/scratch/committed-run" -ErrorAction Stop
+```
+
+After both files have moved, run:
+
+```bash
+python -m portfolio_optimization.portfolio full --confirm-450
+python -m portfolio_optimization.portfolio summarize --runs portfolio_optimization/results/raw/portfolio_runs.jsonl
+python -m portfolio_optimization.portfolio.validate_results
+```
+
+The final command checks all 450 new records, their metadata, and the regenerated
+summary table. To continue an interrupted fresh run in the same environment,
+use `python -m portfolio_optimization.portfolio full --confirm-450 --resume`
+before generating the summary.
 
 ### Comparative analysis (read-only)
 
